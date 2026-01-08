@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>TRPG 作成テスト</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>キャラクターシート</h1>
+
+<table>
+  <tr>
+    <th>能力</th>
+    <th>値</th>
+    <th>修正</th>
+  </tr>
+
+  <tr>
+    <td>STR</td>
+    <td><input type="number" id="str" value="10"></td>
+    <td><span id="strMod">0</span></td>
+  </tr>
+
+  <tr>
+    <td>DEX</td>
+    <td><input type="number" id="dex" value="10"></td>
+    <td><span id="dexMod">0</span></td>
+  </tr>
+
+  <tr>
+    <td>INT</td>
+    <td><input type="number" id="int" value="10"></td>
+    <td><span id="intMod">0</span></td>
+  </tr>
+
+  <tr>
+  <td>CON</td>
+  <td><input type="number" id="con" value="10"></td>
+  <td><span id="conMod">0</span></td>
+  </tr>
+</table>
+
+<h2>クラス・レベル</h2>
+
+<label>
+  クラス：
+  <select id="job">
+    <option value="fighter">ファイター</option>
+    <option value="wizard">ウィザード</option>
+    <option value="rogue">ローグ</option>
+  </select>
+</label>
+
+<br><br>
+
+<label>
+  レベル：
+  <input type="number" id="level" value="1" min="1">
+</label>
+
+<h2>ステータス</h2>
+
+<p>HP：<span id="hp">0</span></p>
+<p>MP：<span id="mp">0</span></p>
+
+<h2>キャラクター保存</h2>
+
+<label>
+  キャラ名：
+  <input type="text" id="charName">
+</label>
+
+<button id="saveBtn">保存</button>
+<button id="renameBtn">リネーム</button>
+<button id="deleteBtn">削除</button>
+
+<h3>保存済みキャラ</h3>
+<ul id="characterList"></ul>
+
+<script src="script.js"></script>
+
+</body>
+</html>
