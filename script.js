@@ -78,10 +78,14 @@ function saveCharacter() {
 
   const character = {
     name,
-    str: document.getElementById("str").value,
-    dex: document.getElementById("dex").value,
-    int: document.getElementById("int").value,
-    con: document.getElementById("con").value,
+    str_daice: document.getElementById("str-daice").value,
+    dex_daice: document.getElementById("dex-daice").value,
+    int_daice: document.getElementById("int-daice").value,
+    con_daice: document.getElementById("con-daice").value,
+    str_quota: document.getElementById("str-quota").value,
+    dex_quota: document.getElementById("dex-quota").value,
+    int_quota: document.getElementById("int-quota").value,
+    con_quota: document.getElementById("con-quota").value,
     job: document.getElementById("job").value,
     level: document.getElementById("level").value
   };
@@ -110,10 +114,14 @@ function loadCharacter(name) {
   currentCharacterName = name;
 
   document.getElementById("charName").value = character.name;
-  document.getElementById("str").value = character.str;
-  document.getElementById("dex").value = character.dex;
-  document.getElementById("int").value = character.int;
-  document.getElementById("con").value = character.con;
+  document.getElementById("str-daice").value = character.str_daice;
+  document.getElementById("dex-daice").value = character.dex_daice;
+  document.getElementById("int-daice").value = character.int_daice;
+  document.getElementById("con-daice").value = character.con_daice;
+  document.getElementById("str-quota").value = character.str_quota;
+  document.getElementById("dex-quota").value = character.dex_quota;
+  document.getElementById("int-quota").value = character.int_quota;
+  document.getElementById("con-quota").value = character.con_quota;
   document.getElementById("job").value = character.job;
   document.getElementById("level").value = character.level;
 
