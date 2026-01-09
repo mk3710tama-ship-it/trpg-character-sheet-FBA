@@ -20,27 +20,32 @@ const jobs = {
 // ステータス計算
 // =====================
 function updateStatus() {
-  const str = Number(document.getElementById("str").value);
-  const dex = Number(document.getElementById("dex").value);
-  const intv = Number(document.getElementById("int").value);
-  const con = Number(document.getElementById("con").value);
+  const str_daice = Number(document.getElementById("str-daice").value);
+  const dex_daice = Number(document.getElementById("dex-daice").value);
+  const int_daice = Number(document.getElementById("int-daice").value);
+  const con_daice = Number(document.getElementById("con-daice").value);
+ 
+  const str_quote = Number(document.getElementById("str-quota").value);
+  const dex_quota = Number(document.getElementById("dex-quota").value);
+  const int_quota = Number(document.getElementById("int-quota").value);
+  const con_quota = Number(document.getElementById("con-quota").value);
 
   const level = Number(document.getElementById("level").value);
   const job = document.getElementById("job").value;
 
-  const strMod = calcMod(str);
-  const dexMod = calcMod(dex);
-  const intMod = calcMod(intv);
-  const conMod = calcMod(con);
+  const str_true = str_daice+str_quote;
+  const dex_true = dex_daice+dex_quota;
+  const int_true = int_daice+int_quota;
+  const con_true = con_daice+con_quota;
 
-  document.getElementById("strMod").textContent = strMod;
-  document.getElementById("dexMod").textContent = dexMod;
-  document.getElementById("intMod").textContent = intMod;
-  document.getElementById("conMod").textContent = conMod;
+  document.getElementById("str-true").textContent = str_true;
+  document.getElementById("dex-true").textContent = dex_true;
+  document.getElementById("int-true").textContent = int_true;
+  document.getElementById("con-true").textContent = con_true;
 
   const base = jobs[job];
-  const hp = base.hp + conMod * level;
-  const mp = base.mp + intMod * level;
+  const hp = base.hp + con_true * level;
+  const mp = base.mp + int_true * level;
 
   document.getElementById("hp").textContent = hp;
   document.getElementById("mp").textContent = mp;

@@ -7,39 +7,55 @@
 </head>
 <body>
 
+<!-- 能力値欄（可変）-->
+
 <h1>キャラクターシート</h1>
 
 <table>
   <tr>
-    <th>能力</th>
-    <th>値</th>
-    <th>修正</th>
+    <th>ステータス名<th>
+    <th>基礎値</th>
+    <th>ダイス値</th>
+    <th>割り振り</th>
+    <th>決定値</th>
   </tr>
 
   <tr>
     <td>STR</td>
-    <td><input type="number" id="str" value="10"></td>
-    <td><span id="strMod">0</span></td>
+    <td><span id="str-base">0</span></td>
+    <td><input type="number" id="str-daice" value="0"></td>
+    <td><input type="number" id="str-quota" value="0"></td>
+    <td><span id="str-true">0</span></td>
   </tr>
 
   <tr>
     <td>DEX</td>
-    <td><input type="number" id="dex" value="10"></td>
-    <td><span id="dexMod">0</span></td>
+    <td><span id="dex-base">0</span></td>
+    <td><input type="number" id="dex-daice" value="0"></td>
+    <td><input type="number" id="dex-quota" value="0"></td>
+    <td><span id="dex-true">0</span></td>
   </tr>
 
   <tr>
     <td>INT</td>
-    <td><input type="number" id="int" value="10"></td>
-    <td><span id="intMod">0</span></td>
+    <td><span id="int-base">0</span></td>
+    <td><input type="number" id="int-daice" value="0"></td>
+    <td><input type="number" id="int-quota" value="0"></td>
+    <td><span id="int-true">0</span></td>
   </tr>
 
   <tr>
   <td>CON</td>
-  <td><input type="number" id="con" value="10"></td>
-  <td><span id="conMod">0</span></td>
+  <td><span id="con-base">0</span></td>
+  <td><input type="number" id="con-daice" value="0"></td>
+  <td><input type="number" id="con-quota" value="0"></td>
+  <td><span id="con-true">0</span></td>
   </tr>
 </table>
+
+
+<!-- 種族・職業-->
+
 
 <h2>クラス・レベル</h2>
 
@@ -59,10 +75,16 @@
   <input type="number" id="level" value="1" min="1">
 </label>
 
+
+<!-- 能力値欄（不可変）-->
+
+
 <h2>ステータス</h2>
 
 <p>HP：<span id="hp">0</span></p>
 <p>MP：<span id="mp">0</span></p>
+
+<!-- 以下保存システム（さわらないでおｋ）-->
 
 <h2>キャラクター保存</h2>
 
