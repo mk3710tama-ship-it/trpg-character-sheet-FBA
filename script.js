@@ -89,6 +89,7 @@ function saveCharacter() {
     job: document.getElementById("job").value,
     level: document.getElementById("level").value
   };
+  alert("保存処理に入りました");
 
   const index = characters.findIndex(c => c.name === name);
   if (index >= 0) {
