@@ -11,9 +11,9 @@ function calcMod(value) {
 }
 
 const jobs = {
-  fighter: { hp: 10, mp: 0 },
-  wizard: { hp: 6, mp: 10 },
-  rogue: { hp: 8, mp: 4 }
+  human: { str:3,con:3,pow:3,agi:2,dex:3,ida:5,hp:0,sm:8 },
+  Warbeast: { str:2,con:1,pow:1,agi:1,dex:3,ida:1,hp:6,sm:1 },
+  Hobbit: { str:1,con:2,pow:2,agi:2,dex:2,ida:5,hp:8,sm:1 }
 };
 
 // =====================
@@ -33,6 +33,10 @@ function updateStatus() {
   const level = Number(document.getElementById("level").value);
   const job = document.getElementById("job").value;
 
+  const base = jobs[job];
+
+    
+
   const str_true = str_daice+str_quote;
   const dex_true = dex_daice+dex_quota;
   const int_true = int_daice+int_quota;
@@ -43,12 +47,10 @@ function updateStatus() {
   document.getElementById("int-true").textContent = int_true;
   document.getElementById("con-true").textContent = con_true;
 
-  const base = jobs[job];
+  
   const hp = base.hp + con_true * level;
-  const mp = base.mp + int_true * level;
 
   document.getElementById("hp").textContent = hp;
-  document.getElementById("mp").textContent = mp;
 }
 
 // =====================

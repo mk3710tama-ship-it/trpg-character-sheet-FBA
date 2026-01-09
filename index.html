@@ -11,9 +11,9 @@
 
 <h1>キャラクターシート</h1>
 
-<table>
+<table class="status-table">
   <tr>
-    <th>ステータス名<th>
+    <th>ステータス名</th>
     <th>基礎値</th>
     <th>ダイス値</th>
     <th>割り振り</th>
@@ -45,11 +45,11 @@
   </tr>
 
   <tr>
-  <td>CON</td>
-  <td><span id="con-base">0</span></td>
-  <td><input type="number" id="con-daice" value="0"></td>
-  <td><input type="number" id="con-quota" value="0"></td>
-  <td><span id="con-true">0</span></td>
+    <td>CON</td>
+    <td><span id="con-base">0</span></td>
+    <td><input type="number" id="con-daice" value="0"></td>
+    <td><input type="number" id="con-quota" value="0"></td>
+    <td><span id="con-true">0</span></td>
   </tr>
 </table>
 
@@ -62,9 +62,9 @@
 <label>
   クラス：
   <select id="job">
-    <option value="fighter">ファイター</option>
-    <option value="wizard">ウィザード</option>
-    <option value="rogue">ローグ</option>
+    <option value="human">ヒューマン</option>
+    <option value="Warbeast">ワービースト</option>
+    <option value="HObbit">ホビット</option>
   </select>
 </label>
 
@@ -82,7 +82,6 @@
 <h2>ステータス</h2>
 
 <p>HP：<span id="hp">0</span></p>
-<p>MP：<span id="mp">0</span></p>
 
 <!-- 以下保存システム（さわらないでおｋ）-->
 

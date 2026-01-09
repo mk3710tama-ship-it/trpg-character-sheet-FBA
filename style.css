@@ -6,3 +6,14 @@ body {
 h1 {
   color: #333;
 }
+.status-table {
+  border-collapse: collapse;
+}
+.status-table th, .status-table td {
+  border: 1px solid #ccc;
+  padding: 6px;
+  text-align: center;
+}
+.status-table input {
+  width: 60px;
+}
