@@ -17,3 +17,9 @@ h1 {
 .status-table input {
   width: 60px;
 }
+
+@media (max-width: 600px) {
+  body {
+    font-size: 18px;
+  }
+}
