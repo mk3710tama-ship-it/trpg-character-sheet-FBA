@@ -23,58 +23,95 @@
 
   <tr>
     <td>STR</td>
-    <td><span id="str-base">0</span></td>
+    <td><span id="str-race">0</span></td>
     <td><input type="number" id="str-daice" value="0"></td>
     <td><input type="number" id="str-quota" value="0"></td>
     <td><span id="str-true">0</span></td>
   </tr>
 
   <tr>
+    <td>CON</td>
+    <td><span id="con-race">0</span></td>
+    <td><input type="number" id="con-daice" value="0"></td>
+    <td><input type="number" id="con-quota" value="0"></td>
+    <td><span id="con-true">0</span></td>
+  </tr>
+
+  <tr>
+    <td>POW</td>
+    <td><span id="pow-race">0</span></td>
+    <td><input type="number" id="pow-daice" value="0"></td>
+    <td><input type="number" id="pow-quota" value="0"></td>
+    <td><span id="pow-true">0</span></td>
+  </tr>
+
+  <tr>
+    <td>AGI</td>
+    <td><span id="agi-race">0</span></td>
+    <td><input type="number" id="agi-daice" value="0"></td>
+    <td><input type="number" id="agi-quota" value="0"></td>
+    <td><span id="agi-true">0</span></td>
+  </tr>
+
+  <tr>
     <td>DEX</td>
-    <td><span id="dex-base">0</span></td>
+    <td><span id="dex-race">0</span></td>
     <td><input type="number" id="dex-daice" value="0"></td>
     <td><input type="number" id="dex-quota" value="0"></td>
     <td><span id="dex-true">0</span></td>
   </tr>
 
   <tr>
-    <td>INT</td>
-    <td><span id="int-base">0</span></td>
+    <td>IDA</td>
+    <td><span id="int-race">0</span></td>
     <td><input type="number" id="int-daice" value="0"></td>
     <td><input type="number" id="int-quota" value="0"></td>
     <td><span id="int-true">0</span></td>
   </tr>
 
-  <tr>
-    <td>CON</td>
-    <td><span id="con-base">0</span></td>
-    <td><input type="number" id="con-daice" value="0"></td>
-    <td><input type="number" id="con-quota" value="0"></td>
-    <td><span id="con-true">0</span></td>
-  </tr>
+  
 </table>
 
 
 <!-- 種族・職業-->
 
 
-<h2>クラス・レベル</h2>
+<h2>種族・レベル</h2>
 
 <label>
-  クラス：
-  <select id="job">
+  　　　　種族：
+  <select id="specie">
     <option value="human">ヒューマン</option>
     <option value="Warbeast">ワービースト</option>
     <option value="HObbit">ホビット</option>
   </select>
 </label>
 
-<br><br>
+<br></br>
 
 <label>
-  レベル：
-  <input type="number" id="level" value="1" min="1">
+  メインジョブ：
+  <select id="mein-job">
+    <option value="warrior">近接職</option>
+    <option value="archer">遠距離職</option>
+    <option value="wizard">魔法職</option>
+    <option value="supporter">支援職</option>
+    <option value="puroducer">生産職</option>
+  </select>
 </label>
+
+<label>
+  　サブジョブ：
+  <select id="sub-job">
+    <option value="warrior">近接職</option>
+    <option value="archer">遠距離職</option>
+    <option value="wizard">魔法職</option>
+    <option value="supporter">支援職</option>
+    <option value="puroducer">生産職</option>
+  </select>
+</label>
+
+
 
 
 <!-- 能力値欄（不可変）-->
@@ -93,9 +130,9 @@
   <input type="text" id="charName">
 </label>
 
-<button id="saveBtn">保存</button>
-<button id="renameBtn">リネーム</button>
-<button id="deleteBtn">削除</button>
+<button type="button" id="saveBtn">保存</button>
+<button type="button" id="renameBtn">リネーム</button>
+<button type="button" id="deleteBtn">削除</button>
 
 <h3>保存済みキャラ</h3>
 <ul id="characterList"></ul>
