@@ -22,7 +22,11 @@
   <select id="specie">
     <option value="human">ヒューマン</option>
     <option value="Warbeast">ワービースト</option>
-    <option value="HObbit">ホビット</option>
+    <option value="Hobbit">ホビット</option>
+    <option value="Elf">エルフ</option>
+    <option value="Dwarf">ドワーフ</option>
+    <option value="lizard">リザード</option>
+    <option value="fisher">フィッシャー</option>
   </select>
 </label>
 
@@ -36,6 +40,7 @@
     <option value="wizard">魔法職</option>
     <option value="supporter">支援職</option>
     <option value="puroducer">生産職</option>
+    <option value="none">なし</option>
   </select>
 </label>
 
@@ -49,6 +54,7 @@
     <option value="wizard">魔法職</option>
     <option value="supporter">支援職</option>
     <option value="puroducer">生産職</option>
+    <option value="none">なし</option>
   </select>
 </label>
 
@@ -114,8 +120,7 @@
 
   
 </table>
-
-
+＊ダイスの値はSTR,CON,POW,AGI→1d6  /  DEX,IDA→1d6-1
 
 
 
@@ -150,6 +155,15 @@
     <td><input type="number" id="mp-quota" value="0"></td>
     <td><span id="mp-true">0</span></td>
   </tr>
+
+  <tr>
+    <td>スタミナ</td>
+    <td><span id="sm-race">0</span></td>
+    <td> <input type="number" id="sm-daice" value="0"></td>
+    <td><input type="number" id="sm-quota" value="0"></td>
+    <td><span id="sm-true">0</span></td>
+  </tr>
+
 </table>
 
 

@@ -9,8 +9,12 @@ let currentCharacterName = null;
 
 const species = {
   human: { str:3,con:3,pow:3,agi:2,dex:3,int:5,hp:0,sm:8 },
-  Warbeast: { str:2,con:1,pow:1,agi:1,dex:3,int:1,hp:6,sm:1 },
-  Hobbit: { str:1,con:2,pow:2,agi:2,dex:2,int:5,hp:8,sm:1 }
+  Warbeast: { str:4,con:4,pow:1,agi:5,dex:1,int:3,hp:0,sm:14 },
+  Hobbit: { str:1,con:1,pow:2,agi:4,dex:5,int:7,hp:0,sm:4 },
+  Elf: { str:2,con:2,pow:4,agi:3,dex:3,int:4,hp:0,sm:11 },
+  Dwarf: { str:5,con:4,pow:2,agi:1,dex:4,int:6,hp:0,sm:6 },
+  lizard:{ str:4,con:4,pow:4,agi:2,dex:2,int:2,hp:0,sm:10 },
+  fisher:{ str:3,con:3,pow:1,agi:2,dex:3,int:4,hp:0,sm:9 }
 };
 
 const meinJobs ={
@@ -18,7 +22,8 @@ const meinJobs ={
   archer: { agi:2,dex:0,mp:0,hp:0,sm:0 },
   wizard: { agi:0,dex:0,mp:0,hp:0,sm:8 },
   supporter: { agi:0,dex:0,mp:6,hp:0,sm:0 },
-  puroducer: { agi:0,dex:2,mp:0,hp:0,sm:0 }
+  puroducer: { agi:0,dex:2,mp:0,hp:0,sm:0 },
+  none: { agi:0,dex:0,mp:0,hp:0,sm:0 }
 };
 
 const subJobs ={
@@ -26,7 +31,8 @@ const subJobs ={
   archer: { agi:1,dex:0,mp:0,hp:0,sm:0 },
   wizard: { agi:0,dex:0,mp:0,hp:0,sm:6 },
   supporter: { agi:0,dex:0,mp:3,hp:0,sm:0 },
-  puroducer: { agi:0,dex:1,mp:0,hp:0,sm:0 }
+  puroducer: { agi:0,dex:1,mp:0,hp:0,sm:0 },
+  none: { agi:0,dex:0,mp:0,hp:0,sm:0 }
 };
 
 // =====================
@@ -40,6 +46,7 @@ function updateStatus() {
   const pow_daice = Number(document.getElementById("pow-daice").value);
   const agi_daice = Number(document.getElementById("agi-daice").value);;
   const mp_daice = Number(document.getElementById("mp-daice").value);
+  const sm_daice = Number(document.getElementById("sm-daice").value);
 
  
   const str_quote = Number(document.getElementById("str-quota").value);
@@ -50,6 +57,7 @@ function updateStatus() {
   const agi_quota = Number(document.getElementById("agi-quota").value);
   const hp_quota = Number(document.getElementById("hp-quota").value);
   const mp_quota = Number(document.getElementById("mp-quota").value);
+  const sm_quota = Number(document.getElementById("sm-quota").value);
 
   const specie = document.getElementById("specie").value;
   const meinJob = document.getElementById("mein-job").value;
@@ -74,7 +82,7 @@ function updateStatus() {
   document.getElementById("int-race").textContent = base.int;
   document.getElementById("con-race").textContent = base.con;
   document.getElementById("pow-race").textContent = base.pow;
-  document.getElementById("agi-race").textContent = base.agi;
+  document.getElementById("agi-race").textContent = base.agi+meinJobBonus.agi+subJobBonus.agi;
 
 
   document.getElementById("str-true").textContent = str_true;
@@ -90,11 +98,17 @@ function updateStatus() {
   const hp_true = hp_race + hp_quota;
   const mp_race =Math.floor((pow_daice+base.pow)/ 2) + meinJobBonus.mp + subJobBonus.mp;
   const mp_true = mp_race + mp_daice + mp_quota;
+  const sm_race = base.sm + meinJobBonus.sm + subJobBonus.sm;
+  const sm_true = sm_race + sm_daice + sm_quota;
+
 
   document.getElementById("hp-race").textContent = hp_race;
   document.getElementById("hp-true").textContent = hp_true;
   document.getElementById("mp-race").textContent = mp_race;
   document.getElementById("mp-true").textContent = mp_true;
+  document.getElementById("sm-race").textContent = sm_race;
+  document.getElementById("sm-true").textContent = sm_true;
+  
 }
 
 // =====================
@@ -129,6 +143,7 @@ function saveCharacter() {
     pow_daice: document.getElementById("pow-daice").value,
     agi_daice: document.getElementById("agi-daice").value,
     mp_daice: document.getElementById("mp-daice").value,
+    sm_daice: document.getElementById("sm-daice").value,
 
     str_quota: document.getElementById("str-quota").value,
     dex_quota: document.getElementById("dex-quota").value,
@@ -138,6 +153,7 @@ function saveCharacter() {
     agi_quota: document.getElementById("agi-quota").value,
     hp_quota: document.getElementById("hp-quota").value,
     mp_quota: document.getElementById("mp-quota").value,
+    sm_quota: document.getElementById("sm-quota").value,
 
     specie: document.getElementById("specie").value,
     meinJob: document.getElementById("mein-job").value,
@@ -175,6 +191,7 @@ function loadCharacter(name) {
   document.getElementById("pow-daice").value = character.pow_daice;
   document.getElementById("agi-daice").value = character.agi_daice;
   document.getElementById("mp-daice").value = character.mp_daice;
+  document.getElementById("sm-daice").value = character.sm_daice;
 
   document.getElementById("str-quota").value = character.str_quota;
   document.getElementById("dex-quota").value = character.dex_quota;
@@ -184,6 +201,7 @@ function loadCharacter(name) {
   document.getElementById("agi-quota").value = character.agi_quota;
   document.getElementById("hp-quota").value = character.hp_quota;
   document.getElementById("mp-quota").value = character.mp_quota;
+  document.getElementById("sm-quota").value = character.sm_quota;
 
   document.getElementById("specie").value = character.specie;
   document.getElementById("mein-job").value = character.meinJob;
