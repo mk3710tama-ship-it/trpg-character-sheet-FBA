@@ -8,10 +8,53 @@
 </head>
 <body>
 
-<!-- 能力値欄（可変）-->
 
 <h1>キャラクターシート</h1>
 
+
+<!-- 種族・職業-->
+
+
+<h2>種族・レベル</h2>
+
+<label>
+  　　　　種族：
+  <select id="specie">
+    <option value="human">ヒューマン</option>
+    <option value="Warbeast">ワービースト</option>
+    <option value="HObbit">ホビット</option>
+  </select>
+</label>
+
+<br></br>
+
+<label>
+  メインジョブ：
+  <select id="mein-job">
+    <option value="warrior">近接職</option>
+    <option value="archer">遠距離職</option>
+    <option value="wizard">魔法職</option>
+    <option value="supporter">支援職</option>
+    <option value="puroducer">生産職</option>
+  </select>
+</label>
+
+<br></br>
+
+<label>
+  　サブジョブ：
+  <select id="sub-job">
+    <option value="warrior">近接職</option>
+    <option value="archer">遠距離職</option>
+    <option value="wizard">魔法職</option>
+    <option value="supporter">支援職</option>
+    <option value="puroducer">生産職</option>
+  </select>
+</label>
+
+<!-- 能力値欄（可変）-->
+
+<h2>基本ステータス</h2>
 <table class="status-table">
   <tr>
     <th>ステータス名</th>
@@ -73,43 +116,7 @@
 </table>
 
 
-<!-- 種族・職業-->
 
-
-<h2>種族・レベル</h2>
-
-<label>
-  　　　　種族：
-  <select id="specie">
-    <option value="human">ヒューマン</option>
-    <option value="Warbeast">ワービースト</option>
-    <option value="HObbit">ホビット</option>
-  </select>
-</label>
-
-<br></br>
-
-<label>
-  メインジョブ：
-  <select id="mein-job">
-    <option value="warrior">近接職</option>
-    <option value="archer">遠距離職</option>
-    <option value="wizard">魔法職</option>
-    <option value="supporter">支援職</option>
-    <option value="puroducer">生産職</option>
-  </select>
-</label>
-
-<label>
-  　サブジョブ：
-  <select id="sub-job">
-    <option value="warrior">近接職</option>
-    <option value="archer">遠距離職</option>
-    <option value="wizard">魔法職</option>
-    <option value="supporter">支援職</option>
-    <option value="puroducer">生産職</option>
-  </select>
-</label>
 
 
 
@@ -117,9 +124,34 @@
 <!-- 能力値欄（不可変）-->
 
 
-<h2>ステータス</h2>
+<h2>追加ステータス</h2>
 
-<p>HP：<span id="hp">0</span></p>
+<table class="status-table">
+  <tr>
+    <th>ステータス名</th>
+    <th>基礎値</th>
+    <th>ダイス値</th>
+    <th>割り振り</th>
+    <th>決定値</th>
+  </tr>
+
+  <tr>
+    <td>最大HP</td>
+    <td><span id="hp-race">0</span></td>
+    <td></td>
+    <td><input type="number" id="hp-quota" value="0"></td>
+    <td><span id="hp-true">0</span></td>
+  </tr>
+
+  <tr>
+    <td>最大MP</td>
+    <td><span id="mp-race">0</span></td>
+    <td><input type="number" id="mp-daice" value="0"></td>
+    <td><input type="number" id="mp-quota" value="0"></td>
+    <td><span id="mp-true">0</span></td>
+  </tr>
+</table>
+
 
 <!-- 以下保存システム（さわらないでおｋ）-->
 
