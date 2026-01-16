@@ -23,3 +23,8 @@ h1 {
     font-size: 18px;
   }
 }
+
+.view-mode input,
+.view-mode select{
+  display: none;
+}

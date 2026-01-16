@@ -6,9 +6,13 @@
   <title>TRPG 作成テスト</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+<button id="toggle-view-btn">閲覧モード切替</button>
 
 
+  <div id="edit-area">
+  <h2>TRPG キャラクターシート作成ツール</h2>
 <h1>キャラクターシート</h1>
 
 
@@ -182,6 +186,68 @@
 
 <h3>保存済みキャラ</h3>
 <ul id="characterList"></ul>
+
+</div>
+
+<div id="view-area"  style="display: none;">
+  <h2>閲覧</h2>
+
+  <h1 id="view-char-name">（キャラクター名）</h1>
+
+
+
+     <table class="status-table">
+      <tr>
+        <th>STR</th>
+        <th><span id="str-view">0</span></th>
+        <th></th>
+        <th>HP</th>
+        <th><span id="hp-view">0</span></th>
+      </tr>
+
+      <tr>
+        <th>CON</th>
+        <th><span id="con-view">0</span></th>
+        <th></th>
+        <th>MP</th>
+        <th><span id="mp-view">0</span></th>
+      </tr>
+
+      <tr>
+        <th>POW</th>
+        <th><span id="pow-view">0</span></th>
+        <th></th>
+        <th>スタミナ</th>
+        <th><span id="sm-view">0</span></th>
+      </tr>
+
+      <tr>
+        <th>敏捷性</th>
+        <th><span id="agi-view">0</span></th>
+        <th></th>
+        <th></th>
+        <th></th>
+      </tr>
+
+      <tr>
+        <th>器用度</th>
+        <th><span id="dex-view">0</span></th>
+        <th></th>
+        <th></th>
+        <th></th>
+      </tr>
+
+      <tr>
+        <th>発想力</th>
+        <th><span id="int-view">0</span></th>
+        <th></th>
+        <th></th>
+        <th></th>
+      </tr>
+    </table>
+
+      
+  </div>
 
 <script src="script.js"></script>
 

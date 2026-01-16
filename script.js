@@ -8,31 +8,31 @@ let currentCharacterName = null;
 // =====================
 
 const species = {
-  human: { str:3,con:3,pow:3,agi:2,dex:3,int:5,hp:0,sm:8 },
-  Warbeast: { str:4,con:4,pow:1,agi:5,dex:1,int:3,hp:0,sm:14 },
-  Hobbit: { str:1,con:1,pow:2,agi:4,dex:5,int:7,hp:0,sm:4 },
-  Elf: { str:2,con:2,pow:4,agi:3,dex:3,int:4,hp:0,sm:11 },
-  Dwarf: { str:5,con:4,pow:2,agi:1,dex:4,int:6,hp:0,sm:6 },
-  lizard:{ str:4,con:4,pow:4,agi:2,dex:2,int:2,hp:0,sm:10 },
-  fisher:{ str:3,con:3,pow:1,agi:2,dex:3,int:4,hp:0,sm:9 }
+  human: { str:3,con:3,pow:3,agi:2,dex:3,int:5,hp:0,sm:8,mp:0 },
+  Warbeast: { str:4,con:4,pow:1,agi:5,dex:1,int:3,hp:0,sm:14,mp:0 },
+  Hobbit: { str:1,con:1,pow:2,agi:4,dex:5,int:7,hp:0,sm:4,mp:0 },
+  Elf: { str:2,con:2,pow:4,agi:3,dex:3,int:4,hp:0,sm:11,mp:0 },
+  Dwarf: { str:5,con:4,pow:2,agi:1,dex:4,int:6,hp:0,sm:6,mp:0 },
+  lizard:{ str:4,con:4,pow:4,agi:2,dex:2,int:2,hp:0,sm:10,mp:0 },
+  fisher:{ str:3,con:3,pow:1,agi:2,dex:3,int:4,hp:0,sm:9,mp:0 }
 };
 
 const meinJobs ={
-  warrior: { agi:0,dex:0,mp:0,hp:12,sm:0 },
-  archer: { agi:2,dex:0,mp:0,hp:0,sm:0 },
-  wizard: { agi:0,dex:0,mp:0,hp:0,sm:8 },
-  supporter: { agi:0,dex:0,mp:6,hp:0,sm:0 },
-  puroducer: { agi:0,dex:2,mp:0,hp:0,sm:0 },
-  none: { agi:0,dex:0,mp:0,hp:0,sm:0 }
+  warrior: {str:0,con:0,pow:0,agi:0,dex:0,mp:0,hp:12,sm:0,mp:0 },
+  archer: { str:0,con:0,pow:0,agi:2,dex:0,mp:0,hp:0,sm:0,mp:0 },
+  wizard: { str:0,con:0,pow:0,agi:0,dex:0,mp:0,hp:0,sm:12,mp:0 },
+  supporter: { str:0,con:0,pow:0,agi:0,dex:0,mp:0,hp:0,sm:0,mp:6 },
+  puroducer: { str:0,con:0,pow:0,agi:0,dex:2,mp:0,hp:0,sm:0,mp:0 },
+  none: { str:0,con:0,pow:0,agi:0,dex:0,mp:0,hp:0,sm:0,mp:0 }
 };
 
 const subJobs ={
-  warrior: { agi:0,dex:0,mp:0,hp:7,sm:0 },
-  archer: { agi:1,dex:0,mp:0,hp:0,sm:0 },
-  wizard: { agi:0,dex:0,mp:0,hp:0,sm:6 },
-  supporter: { agi:0,dex:0,mp:3,hp:0,sm:0 },
-  puroducer: { agi:0,dex:1,mp:0,hp:0,sm:0 },
-  none: { agi:0,dex:0,mp:0,hp:0,sm:0 }
+  warrior: { str:0,con:0,pow:0,agi:0,dex:0,mp:0,hp:7,sm:0,mp:0 },
+  archer: { str:0,con:0,pow:0,agi:1,dex:0,mp:0,hp:0,sm:0,mp:0 },
+  wizard: { str:0,con:0,pow:0,agi:0,dex:0,mp:0,hp:0,sm:6,mp:0 },
+  supporter: { str:0,con:0,pow:0,agi:0,dex:0,mp:0,hp:0,sm:0,mp:3 },
+  puroducer: { str:0,con:0,pow:0,agi:0,dex:1,mp:0,hp:0,sm:0,mp:0 },
+  none:{ str:0,con:0,pow:0,agi:0,dex:0,mp:0,hp:0,sm:0,mp:0 }
 };
 
 // =====================
@@ -75,6 +75,8 @@ function updateStatus() {
   const con_true = con_daice+con_quota+base.con;
   const pow_true = pow_daice+pow_quota+base.pow;
   const agi_true = agi_daice+agi_quota+base.agi+meinJobBonus.agi+subJobBonus.agi;
+
+
   
 
   document.getElementById("str-race").textContent = base.str;
@@ -93,23 +95,88 @@ function updateStatus() {
   document.getElementById("agi-true").textContent = agi_true;
 
 
+  
+
+
 
   const hp_race = base.hp +(con_daice+base.con)*2+ meinJobBonus.hp + subJobBonus.hp;
-  const hp_true = hp_race + hp_quota;
   const mp_race =Math.floor((pow_daice+base.pow)/ 2) + meinJobBonus.mp + subJobBonus.mp;
-  const mp_true = mp_race + mp_daice + mp_quota;
   const sm_race = base.sm + meinJobBonus.sm + subJobBonus.sm;
+
+  const hp_true = hp_race + hp_quota;
+  const mp_true = mp_race + mp_daice + mp_quota; 
   const sm_true = sm_race + sm_daice + sm_quota;
 
 
   document.getElementById("hp-race").textContent = hp_race;
-  document.getElementById("hp-true").textContent = hp_true;
   document.getElementById("mp-race").textContent = mp_race;
-  document.getElementById("mp-true").textContent = mp_true;
   document.getElementById("sm-race").textContent = sm_race;
+
+  document.getElementById("hp-true").textContent = hp_true;
+  document.getElementById("mp-true").textContent = mp_true;
   document.getElementById("sm-true").textContent = sm_true;
+
+
+
   
 }
+
+
+// =====================
+// イベント：閲覧モード切替
+// =====================
+let isViewMode = false;
+
+document.getElementById("toggle-view-btn").addEventListener("click", () => {
+  isViewMode = !isViewMode;
+
+  document.getElementById("edit-area").style.display = isViewMode ? "none" : "block";
+  document.getElementById("view-area").style.display = isViewMode ? "block" : "none";
+
+  document.getElementById("toggleViewBtn").textContent =
+    isViewMode ? "編集モード" : "閲覧モード";
+
+  if (isViewMode) {
+    updateView();
+  }
+});
+
+// =====================
+// 閲覧エリア更新
+// =====================
+
+function updateView() {
+  document.getElementById("view-char-name").textContent =
+    document.getElementById("charName").value || "（未命名）";
+
+  document.getElementById("str-view").textContent =
+    document.getElementById("str-true").textContent;
+  document.getElementById("con-view").textContent =
+    document.getElementById("con-true").textContent;
+  document.getElementById("pow-view").textContent =
+    document.getElementById("pow-true").textContent;
+  document.getElementById("agi-view").textContent =
+    document.getElementById("agi-true").textContent;
+  document.getElementById("dex-view").textContent =
+    document.getElementById("dex-true").textContent;
+  document.getElementById("int-view").textContent =
+    document.getElementById("int-true").textContent;
+
+
+  document.getElementById("hp-view").textContent =
+    document.getElementById("hp-true").textContent;
+  document.getElementById("mp-view").textContent =
+    document.getElementById("mp-true").textContent;
+  document.getElementById("sm-view").textContent =
+    document.getElementById("sm-true").textContent;
+
+}
+
+
+
+
+
+
 
 // =====================
 // localStorage 操作
@@ -208,6 +275,7 @@ function loadCharacter(name) {
   document.getElementById("sub-job").value = character.subJob;
 
   updateStatus();
+  updateView();
 }
 
 // =====================
@@ -289,4 +357,5 @@ document.getElementById("renameBtn").addEventListener("click", renameCharacter);
 document.getElementById("deleteBtn").addEventListener("click", deleteCharacter);
 
 updateStatus();
+updateView();
 renderCharacterList();
