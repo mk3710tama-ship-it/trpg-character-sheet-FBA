@@ -27,4 +27,5 @@ h1 {
 .view-mode input,
 .view-mode select{
   display: none;
+  pointer-events: none;
 }
