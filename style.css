@@ -37,3 +37,24 @@ h1 {
   padding: 10px;
   font-size: 18px;
 }
+
+#bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #ffffff;
+  border-top: 1px solid #ccc;
+  padding: 8px;
+  text-align: center;
+  z-index: 1000;
+}
+
+#bottom-bar button {
+  font-size: 18px;
+  padding: 10px 20px;
+}
+
+body {
+  padding-bottom: 60px;
+}

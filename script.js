@@ -133,7 +133,9 @@ document.getElementById("toggle-view-btn").addEventListener("click", () => {
   document.getElementById("edit-area").style.display = isViewMode ? "none" : "block";
   document.getElementById("view-area").style.display = isViewMode ? "block" : "none";
 
-  document.getElementById("toggleViewBtn").textContent =
+  document.body.classList.toggle("view-mode", isViewMode);
+
+  document.getElementById("toggle-view-btn").textContent =
     isViewMode ? "編集モード" : "閲覧モード";
 
   if (isViewMode) {
