@@ -125,23 +125,41 @@ function updateStatus() {
 // =====================
 // イベント：閲覧モード切替
 // =====================
-let isViewMode = false;
+let currentScreen = "edit"; // edit / view / list
+function showScreen(screen) {
+  currentScreen = screen;
 
-document.getElementById("toggle-view-btn").addEventListener("click", () => {
-  isViewMode = !isViewMode;
+  document.getElementById("edit-area").style.display =
+    screen === "edit" ? "block" : "none";
 
-  document.getElementById("edit-area").style.display = isViewMode ? "none" : "block";
-  document.getElementById("view-area").style.display = isViewMode ? "block" : "none";
+  document.getElementById("view-area").style.display =
+    screen === "view" ? "block" : "none";
 
-  document.body.classList.toggle("view-mode", isViewMode);
+  document.getElementById("list-area").style.display =
+    screen === "list" ? "block" : "none";
 
-  document.getElementById("toggle-view-btn").textContent =
-    isViewMode ? "編集モード" : "閲覧モード";
+  document.body.classList.toggle("view-mode", screen !== "edit");
 
-  if (isViewMode) {
+  if (screen === "view") {
     updateView();
   }
+
+  if (screen === "list") {
+    renderCharacterList();
+  }
+}
+document.getElementById("btn-edit").addEventListener("click", () => {
+  showScreen("edit");
 });
+
+document.getElementById("btn-view").addEventListener("click", () => {
+  showScreen("view");
+});
+
+document.getElementById("btn-list").addEventListener("click", () => {
+  showScreen("list");
+});
+
 
 // =====================
 // 閲覧エリア更新
@@ -171,6 +189,10 @@ function updateView() {
     document.getElementById("mp-true").textContent;
   document.getElementById("sm-view").textContent =
     document.getElementById("sm-true").textContent;
+
+    const raceSelect = document.getElementById("specie");
+  const raceName = raceSelect.options[raceSelect.selectedIndex].text;
+  document.getElementById("view-race").textContent = raceName;
 
 }
 
@@ -245,6 +267,8 @@ function saveCharacter() {
 // =====================
 // キャラ読み込み
 // =====================
+
+
 function loadCharacter(name) {
   const characters = getCharacters();
   const character = characters.find(c => c.name === name);
@@ -283,19 +307,43 @@ function loadCharacter(name) {
 // =====================
 // 一覧描画
 // =====================
+
 function renderCharacterList() {
-  const list = document.getElementById("characterList");
+  const list = document.getElementById("character-list");
   list.innerHTML = "";
 
   const characters = getCharacters();
-  characters.forEach(c => {
+
+  characters.forEach(character => {
     const li = document.createElement("li");
-    li.textContent = c.name;
-    li.style.cursor = "pointer";
-    li.addEventListener("click", () => loadCharacter(c.name));
+
+    const nameSpan = document.createElement("span");
+    nameSpan.textContent = character.name || "無名キャラ";
+
+    const loadBtn = document.createElement("button");
+    loadBtn.textContent = "読み込み";
+    loadBtn.onclick = () => {
+      loadCharacter(character.name);
+      showScreen("edit");
+    };
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "削除";
+    deleteBtn.onclick = () => {
+      deleteCharacterByName(character.name);
+    };
+
+    li.appendChild(nameSpan);
+    li.appendChild(loadBtn);
+    li.appendChild(deleteBtn);
+
     list.appendChild(li);
   });
 }
+
+
+
+
 
 // =====================
 // リネーム

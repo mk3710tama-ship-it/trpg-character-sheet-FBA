@@ -185,6 +185,9 @@
 <h3>保存済みキャラ</h3>
 <ul id="characterList"></ul>
 
+
+<!--閲覧モード用の表示領域-->
+
 </div>
 
 <div id="view-area"  style="display: none;">
@@ -192,6 +195,7 @@
 
   <h1 id="view-char-name">（キャラクター名）</h1>
 
+<p>種族：<span id="view-race"></span></p>
 
 
      <table class="status-table">
@@ -243,12 +247,18 @@
         <th></th>
       </tr>
     </table>
-
-      
   </div>
 
+<div id="list-area" style="display:none;">
+  <h2>保存キャラクター一覧</h2>
+  <ul id="character-list"></ul>
+</div>
+
+
   <div id="bottom-bar">
-  <button id="toggle-view-btn">閲覧モード</button>
+  <button id="btn-edit">編集</button>
+  <button id="btn-view">閲覧</button>
+  <button id="btn-list">キャラ一覧</button>
 </div>
 
 
