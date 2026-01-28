@@ -123,24 +123,51 @@ function updateStatus() {
 // =====================
 let currentItems = [];
 
+
 function renderItemList() {
-  const ul = document.getElementById("item-list");
-  ul.innerHTML = "";
+  const tbody = document.getElementById("item-list");
+  tbody.innerHTML = "";
 
   currentItems.forEach((item, index) => {
-    const li = document.createElement("li");
-    li.textContent = `${item.name} ×${item.quantity}（${item.note || "備考なし"}）`;
+    const tr = document.createElement("tr");
 
+    // アイテム名
+    const nameTd = document.createElement("td");
+    nameTd.textContent = item.name;
+    tr.appendChild(nameTd);
 
-    const del = document.createElement("button");
-    del.textContent = "削除";
-    del.onclick = () => {
+    // 個数（編集可）
+    const qtyTd = document.createElement("td");
+    const qtyInput = document.createElement("input");
+    qtyInput.type = "number";
+    qtyInput.value = item.quantity;
+    qtyInput.min = 0;
+
+    qtyInput.onchange = () => {
+      item.quantity = Number(qtyInput.value) || 0;
+    };
+
+    qtyTd.appendChild(qtyInput);
+    tr.appendChild(qtyTd);
+
+    // 備考
+    const noteTd = document.createElement("td");
+    noteTd.textContent = item.note || "";
+    tr.appendChild(noteTd);
+
+    // 削除
+    const delTd = document.createElement("td");
+    const delBtn = document.createElement("button");
+    delBtn.textContent = "×";
+    delBtn.onclick = () => {
       currentItems.splice(index, 1);
       renderItemList();
     };
 
-    li.appendChild(del);
-    ul.appendChild(li);
+    delTd.appendChild(delBtn);
+    tr.appendChild(delTd);
+
+    tbody.appendChild(tr);
   });
 }
 
