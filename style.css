@@ -1,11 +1,28 @@
+/*===============*/
+/* body Styles   */
+/*===============*/
+
 body {
   font-family: sans-serif;
   background-color: #f0f0f0;
+  padding-bottom: 60px;
+}
+
+@media (max-width: 600px) {
+  body {
+    font-size: 18px;
+  }
 }
 
 h1 {
   color: #333;
 }
+
+
+
+/*=====================*/
+/* status table Styles */
+/*=====================*/
 .status-table {
   border-collapse: collapse;
 }
@@ -18,17 +35,52 @@ h1 {
   width: 60px;
 }
 
-@media (max-width: 600px) {
-  body {
-    font-size: 18px;
-  }
+
+/*===================*/
+/* item table Styles */
+/*===================*/
+.item-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
 }
+
+
+.item-table th,
+.item-table td {
+  border: 1px solid #ccc;
+  padding: 4px 6px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.item-table input[type="number"] {
+  width: 60px;
+}
+
+.item-table button {
+  padding: 2px 6px;
+  font-size: 12px;
+}
+
+
+
+
+
+
+/*===================*/
+/* View Mode Styles  */
+/*===================*/
 
 .view-mode input,
 .view-mode select{
   display: none;
   pointer-events: none;
 }
+
+/*===================*/
+/* Bottom Bar Styles */
+/*===================*/
 
 #toggleViewBtn {
   position: sticky;
@@ -55,28 +107,6 @@ h1 {
   padding: 10px 20px;
 }
 
-body {
-  padding-bottom: 60px;
-}
 
-.item-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 8px;
-}
 
-.item-table th,
-.item-table td {
-  border: 1px solid #ccc;
-  padding: 4px 6px;
-  font-size: 14px;
-}
 
-.item-table input[type="number"] {
-  width: 60px;
-}
-
-.item-table button {
-  padding: 2px 6px;
-  font-size: 12px;
-}
