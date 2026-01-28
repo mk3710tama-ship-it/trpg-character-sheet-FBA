@@ -1,7 +1,7 @@
 // =====================
 // グローバル変数
 // =====================
-let currentCharacterName = null;
+let currentCharacterId = null;
 
 // =====================
 // 基本計算
@@ -116,10 +116,60 @@ function updateStatus() {
   document.getElementById("mp-true").textContent = mp_true;
   document.getElementById("sm-true").textContent = sm_true;
 
-
-
-  
 }
+
+// =====================
+// アイテム管理
+// =====================
+let currentItems = [];
+
+function renderItemList() {
+  const ul = document.getElementById("item-list");
+  ul.innerHTML = "";
+
+  currentItems.forEach((item, index) => {
+    const li = document.createElement("li");
+    li.textContent = `${item.name} ×${item.quantity}（${item.note || "備考なし"}）`;
+
+
+    const del = document.createElement("button");
+    del.textContent = "削除";
+    del.onclick = () => {
+      currentItems.splice(index, 1);
+      renderItemList();
+    };
+
+    li.appendChild(del);
+    ul.appendChild(li);
+  });
+}
+
+
+document.getElementById("add-item").addEventListener("click", () => {
+  const nameEl = document.getElementById("item-name");
+  const qtyEl = document.getElementById("item-qty");
+  const noteEl = document.getElementById("item-note");
+
+  const name = nameEl.value.trim();
+  if (!name) return;
+
+  currentItems.push({
+    name: name,
+    quantity: Number(qtyEl.value) || 1,
+    note: noteEl.value
+  });
+
+  renderItemList();
+
+  // 入力欄クリア（任意）
+  nameEl.value = "";
+  noteEl.value = "";
+});
+
+
+
+
+
 
 
 // =====================
@@ -216,6 +266,7 @@ function saveCharacters(list) {
 // =====================
 // キャラ保存
 // =====================
+
 function saveCharacter() {
   const name = document.getElementById("charName").value.trim();
   if (!name) {
@@ -225,8 +276,13 @@ function saveCharacter() {
 
   const characters = getCharacters();
 
+  // 既存キャラID（編集中のキャラ）
+  let characterId = currentCharacterId || crypto.randomUUID();
+
   const character = {
+    id: characterId,
     name,
+
     str_daice: document.getElementById("str-daice").value,
     dex_daice: document.getElementById("dex-daice").value,
     int_daice: document.getElementById("int-daice").value,
@@ -248,10 +304,13 @@ function saveCharacter() {
 
     specie: document.getElementById("specie").value,
     meinJob: document.getElementById("mein-job").value,
-    subJob: document.getElementById("sub-job").value
+    subJob: document.getElementById("sub-job").value,
+    items: currentItems
   };
 
-  const index = characters.findIndex(c => c.name === name);
+  // IDで上書き判定
+  const index = characters.findIndex(c => c.id === characterId);
+
   if (index >= 0) {
     characters[index] = character;
   } else {
@@ -259,22 +318,24 @@ function saveCharacter() {
   }
 
   saveCharacters(characters);
-  currentCharacterName = name;
+
+  currentCharacterId = characterId;
   renderCharacterList();
   alert("保存しました");
 }
+
+
 
 // =====================
 // キャラ読み込み
 // =====================
 
-
-function loadCharacter(name) {
+function loadCharacterById(id) {
   const characters = getCharacters();
-  const character = characters.find(c => c.name === name);
+  const character = characters.find(c => c.id === id);
   if (!character) return;
 
-  currentCharacterName = name;
+  currentCharacterId = id;
 
   document.getElementById("charName").value = character.name;
   document.getElementById("str-daice").value = character.str_daice;
@@ -300,8 +361,14 @@ function loadCharacter(name) {
   document.getElementById("mein-job").value = character.meinJob;
   document.getElementById("sub-job").value = character.subJob;
 
+  currentItems = character.items || [];
+
+
+
   updateStatus();
   updateView();
+  renderItemList();
+
 }
 
 // =====================
@@ -323,15 +390,16 @@ function renderCharacterList() {
     const loadBtn = document.createElement("button");
     loadBtn.textContent = "読み込み";
     loadBtn.onclick = () => {
-      loadCharacter(character.name);
+      loadCharacterById(character.id);
       showScreen("edit");
     };
 
     const deleteBtn = document.createElement("button");
     deleteBtn.textContent = "削除";
-    deleteBtn.onclick = () => {
-      deleteCharacterByName(character.name);
-    };
+  deleteBtn.onclick = () => {
+  currentCharacterId = character.id;
+  deleteCharacter();
+};
 
     li.appendChild(nameSpan);
     li.appendChild(loadBtn);
@@ -348,8 +416,9 @@ function renderCharacterList() {
 // =====================
 // リネーム
 // =====================
+
 function renameCharacter() {
-  if (!currentCharacterName) {
+  if (!currentCharacterId) {
     alert("リネームするキャラを選択してください");
     return;
   }
@@ -361,39 +430,84 @@ function renameCharacter() {
   }
 
   const characters = getCharacters();
-  if (characters.some(c => c.name === newName)) {
+
+  if (characters.some(c => c.name === newName && c.id !== currentCharacterId)) {
     alert("同名のキャラが存在します");
     return;
   }
 
-  const character = characters.find(c => c.name === currentCharacterName);
+  const character = characters.find(c => c.id === currentCharacterId);
+  if (!character) return;
+
   character.name = newName;
 
   saveCharacters(characters);
-  currentCharacterName = newName;
   renderCharacterList();
+
+  alert("キャラ名を変更しました");
 }
+
 
 // =====================
 // 削除
 // =====================
+
 function deleteCharacter() {
-  if (!currentCharacterName) {
+  if (!currentCharacterId) {
     alert("削除するキャラを選択してください");
     return;
   }
 
-  if (!confirm(`「${currentCharacterName}」を削除しますか？`)) return;
+  const characters = getCharacters();
+  const target = characters.find(c => c.id === currentCharacterId);
 
-  let characters = getCharacters();
-  characters = characters.filter(c => c.name !== currentCharacterName);
+  if (!target) {
+    alert("削除対象のキャラが見つかりません");
+    return;
+  }
 
-  saveCharacters(characters);
-  currentCharacterName = null;
+  const message =
+    `以下のキャラクターを削除します。\n\n` +
+    `キャラ名：${target.name}\n` +
+    `種族：${target.specie}\n` +
+    `メイン職：${target.meinJob}\n\n` +
+    `この操作は取り消せません。本当に削除しますか？`;
+
+  if (!confirm(message)) return;
+
+  const filtered = characters.filter(c => c.id !== currentCharacterId);
+  saveCharacters(filtered);
+
+  currentCharacterId = null;
 
   document.getElementById("charName").value = "";
   renderCharacterList();
+
+  alert("キャラクターを削除しました");
 }
+
+///====================
+//id導入時の仕様変更
+//====================
+function migrateCharacters() {
+  const characters = getCharacters();
+  let changed = false;
+
+  characters.forEach(c => {
+    if (!c.id) {
+      c.id = crypto.randomUUID();
+      changed = true;
+    }
+  });
+
+  if (changed) {
+    saveCharacters(characters);
+  }
+}
+migrateCharacters();
+
+
+
 
 // =====================
 // イベント登録 & 初期化
