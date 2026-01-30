@@ -18,6 +18,11 @@ h1 {
   color: #333;
 }
 
+body {
+  padding-bottom: 180px;
+}
+
+
 
 
 /*=====================*/
@@ -102,6 +107,13 @@ h1 {
   text-align: center;
   z-index: 1000;
 }
+
+#bottom-bar {
+  min-height: 140px;
+  padding: 20px 24px;
+  box-sizing: border-box;
+}
+
 
 #bottom-bar button {
   font-size: 18px;
