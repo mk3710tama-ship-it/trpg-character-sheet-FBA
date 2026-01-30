@@ -60,6 +60,26 @@
   </select>
 </label>
 
+<br></br>
+レベル: <input type="number" id="level" value="1" min="1" max="99">
+
+<h3>割り振りポイント初期値</h3>
+
+<label>
+  <input type="radio" name="alloc-init" value="random" checked>
+  ランダム（0〜10）
+</label>
+
+<label>
+  <input type="radio" name="alloc-init" value="fixed">
+  固定値 5
+</label>
+
+<button type="button" onclick="initAllocationByChoice()">
+  初期ポイント決定
+</button>
+
+
 <!-- 能力値欄（可変）-->
 
 <h2>基本ステータス</h2>
@@ -143,7 +163,7 @@
 
 <h2>追加ステータス</h2>
 
-<button type="button" onclick="add_rollAllStats()">🎲 一括ロール(幸運、MP抜き)</button>
+<button type="button" onclick="add_rollAllStats()">🎲 一括ロール</button>
 
 <table class="status-table">
   <tr>
@@ -337,6 +357,9 @@
 
 
   <div id="bottom-bar">
+  <span id="point-summary"></span>
+
+
   <button id="btn-edit">編集</button>
   <button id="btn-view">閲覧</button>
   <button id="btn-list">キャラ一覧</button>

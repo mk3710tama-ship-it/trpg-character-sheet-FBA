@@ -42,6 +42,9 @@ const subJobs ={
 // ステータス計算
 // =====================
 function updateStatus() {
+
+  const level = Number(document.getElementById("level").value);
+
   const str_daice = Number(document.getElementById("str-daice").value);
   const dex_daice = Number(document.getElementById("dex-daice").value);
   const int_daice = Number(document.getElementById("int-daice").value);
@@ -54,7 +57,7 @@ function updateStatus() {
   const memory_daice = Number(document.getElementById("memory-daice").value);
 
  
-  const str_quote = Number(document.getElementById("str-quota").value);
+  const str_quota = Number(document.getElementById("str-quota").value);
   const dex_quota = Number(document.getElementById("dex-quota").value);
   const int_quota = Number(document.getElementById("int-quota").value);
   const con_quota = Number(document.getElementById("con-quota").value);
@@ -89,7 +92,7 @@ function updateStatus() {
   const subJobBonus = subJobs[subJob];
 
 
-  const str_true = str_daice+str_quote+base.str+str_correction;
+  const str_true = str_daice+str_quota+base.str+str_correction;
   const dex_true = dex_daice+dex_quota+base.dex+dex_correction+meinJobBonus.dex+subJobBonus.dex;
   const int_true = int_daice+int_quota+base.int+int_correction;
   const con_true = con_daice+con_quota+base.con+con_correction;
@@ -139,7 +142,87 @@ function updateStatus() {
   document.getElementById("luck-true").textContent = luck_true;
   document.getElementById("memory-true").textContent = memory_true;
 
+
+  const quotas = {
+  str: str_quota,
+  dex: dex_quota,
+  int: int_quota,
+  con: con_quota,
+  pow: pow_quota,
+  agi: agi_quota,
+  hp: hp_quota,
+  mp: mp_quota,
+  sm: sm_quota,
+  luck: luck_quota,
+  memory: memory_quota
+};
+  setLevelBonus(level);
+  useAllocationPoints(quotas);
+  getRemainingPoints();
 }
+
+//====================
+//割り振りポイント管理
+//====================
+let allocation = {
+  base: 0,        // 初期ランダム
+  levelBonus: 0,  // レベル由来
+  used: 0         // 使用済み
+};
+
+function getTotalPoints() {
+  return allocation.base + allocation.levelBonus;
+}
+
+function getRemainingPoints() {
+  return getTotalPoints() - allocation.used;
+}
+
+
+function setLevelBonus(level) {
+  allocation.levelBonus = level * 2; // 仮ルール
+  updateAllocationBar();
+}
+
+function useAllocationPoints(quotas) {
+  allocation.used = Object.values(quotas)
+    .reduce((sum, v) => sum + v, 0);
+
+  updateAllocationBar();
+}
+
+
+function updateAllocationBar() {
+  const el = document.getElementById("point-summary");
+  if (!el) return;
+
+  el.textContent =
+    `割り振りポイント：${getRemainingPoints()} / ${getTotalPoints()} `
+    + `(初期:${allocation.base} + Lv:${allocation.levelBonus} - 使用:${allocation.used})`;
+}
+
+function initAllocationByChoice() {
+  const selected = document.querySelector(
+    'input[name="alloc-init"]:checked'
+  )?.value;
+
+
+  if (selected === "fixed") {
+    allocation.base = 5;
+  } else {
+    allocation.base = rollDice(0, 10);
+  }
+
+  updateAllocationBar();
+}
+
+function lockAllocationInit() {
+  document
+    .querySelectorAll('input[name="alloc-init"]')
+    .forEach(r => r.disabled = true);
+}
+
+
 
 // =====================
 // ダイスロール
@@ -494,7 +577,9 @@ function saveCharacter() {
     specie: document.getElementById("specie").value,
     meinJob: document.getElementById("mein-job").value,
     subJob: document.getElementById("sub-job").value,
-    items: currentItems
+    items: currentItems,
+    allocation: allocation
+
   };
 
   // IDで上書き判定
@@ -567,6 +652,15 @@ function loadCharacterById(id) {
   document.getElementById("sub-job").value = character.subJob;
 
   currentItems = (character.items || []).map(item => ({ ...item }));
+  
+  allocation = character.allocation || {
+  base: 0,
+  levelBonus: 0,
+  used: 0
+};
+
+
+
 
 
 
@@ -574,7 +668,7 @@ function loadCharacterById(id) {
   updateStatus();
   updateView();
   renderItemList();
-
+  updateAllocationBar();
 if (currentScreen === "view") {
   renderViewItemList();
 }
@@ -734,3 +828,4 @@ document.getElementById("deleteBtn").addEventListener("click", deleteCharacter);
 updateStatus();
 updateView();
 renderCharacterList();
+updateAllocationBar();
