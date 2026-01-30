@@ -159,6 +159,9 @@ function updateStatus() {
   setLevelBonus(level);
   useAllocationPoints(quotas);
   getRemainingPoints();
+  recalcSkillPoints();
+  updateSkillPointBar();
+
 }
 
 //====================
@@ -196,10 +199,24 @@ function updateAllocationBar() {
   const el = document.getElementById("point-summary");
   if (!el) return;
 
+  const remaining = getRemainingPoints();
+  const total = getTotalPoints();
+
   el.textContent =
-    `割り振りポイント：${getRemainingPoints()} / ${getTotalPoints()} `
+    `割り振り：${remaining} / ${total} `
     + `(初期:${allocation.base} + Lv:${allocation.levelBonus} - 使用:${allocation.used})`;
+
+  // 赤文字にする処理
+  if (remaining < 0) {
+    el.classList.add("negative");
+  } else {
+    el.classList.remove("negative");
+  }
+  
+  recalcSkillPoints();
+  updateSkillPointBar();
 }
+
 
 function initAllocationByChoice() {
   const selected = document.querySelector(
@@ -222,6 +239,46 @@ function lockAllocationInit() {
     .forEach(r => r.disabled = true);
 }
 
+//======================
+//職業ポイント管理
+//======================
+
+let skillPoints = {
+  base: 5,        // 初期値
+  levelBonus: 0,  // 将来用
+  used: 0         // 使用済み
+};
+
+function getTotalSkillPoints() {
+  return skillPoints.base + skillPoints.levelBonus;
+}
+
+function getRemainingSkillPoints() {
+  return getTotalSkillPoints() - skillPoints.used;
+}
+
+function recalcSkillPoints() {
+  skillPoints.levelBonus =
+    allocation.base + allocation.levelBonus - allocation.used;
+}
+
+function updateSkillPointBar() {
+  const el = document.getElementById("skill-point-summary");
+  if (!el) return;
+
+  const remain = getRemainingSkillPoints();
+  const total = getTotalSkillPoints();
+
+  el.textContent =
+    `スキルP：${remain} / ${total} `
+    + `(使用可能:${total} - 使用:${skillPoints.used})`;
+
+  if (remain < 0) {
+    el.classList.add("negative");
+  } else {
+    el.classList.remove("negative");
+  }
+}
 
 
 // =====================
@@ -578,7 +635,9 @@ function saveCharacter() {
     meinJob: document.getElementById("mein-job").value,
     subJob: document.getElementById("sub-job").value,
     items: currentItems,
-    allocation: allocation
+    allocation: allocation,
+    skillPoints: skillPoints
+
 
   };
 
@@ -659,6 +718,15 @@ function loadCharacterById(id) {
   used: 0
 };
 
+skillPoints = character.skillPoints || {
+  base: 5,
+  levelBonus: 0,
+  used: 0
+};
+
+
+
+
 
 
 
@@ -669,10 +737,12 @@ function loadCharacterById(id) {
   updateView();
   renderItemList();
   updateAllocationBar();
+  updateSkillPointBar();
+
 if (currentScreen === "view") {
   renderViewItemList();
 }
-
+  
 
 }
 
@@ -829,3 +899,4 @@ updateStatus();
 updateView();
 renderCharacterList();
 updateAllocationBar();
+updateSkillPointBar();

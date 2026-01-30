@@ -33,6 +33,11 @@ body {
   }
 }
 
+.negative {
+  color: #e53935;
+  font-weight: bold;
+}
+
 
 
 
