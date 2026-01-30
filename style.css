@@ -22,6 +22,17 @@ body {
   padding-bottom: 180px;
 }
 
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 140px;
+  }
+
+  #bottom-bar {
+    min-height: 120px;
+    padding: 16px;
+  }
+}
+
 
 
 
@@ -108,11 +119,7 @@ body {
   z-index: 1000;
 }
 
-#bottom-bar {
-  min-height: 140px;
-  padding: 20px 24px;
-  box-sizing: border-box;
-}
+
 
 
 #bottom-bar button {
