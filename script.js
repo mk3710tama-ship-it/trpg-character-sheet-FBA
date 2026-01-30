@@ -18,22 +18,25 @@ const species = {
 };
 
 const meinJobs ={
-  warrior: {str:0,con:0,pow:0,agi:0,dex:0,mp:0,hp:12,sm:0,mp:0 },
-  archer: { str:0,con:0,pow:0,agi:2,dex:0,mp:0,hp:0,sm:0,mp:0 },
-  wizard: { str:0,con:0,pow:0,agi:0,dex:0,mp:0,hp:0,sm:12,mp:0 },
-  supporter: { str:0,con:0,pow:0,agi:0,dex:0,mp:0,hp:0,sm:0,mp:6 },
-  puroducer: { str:0,con:0,pow:0,agi:0,dex:2,mp:0,hp:0,sm:0,mp:0 },
-  none: { str:0,con:0,pow:0,agi:0,dex:0,mp:0,hp:0,sm:0,mp:0 }
+  warrior: {str:0,con:0,pow:0,agi:0,dex:0,int:0,mp:0,hp:12,sm:0,mp:0 },
+  archer: { str:0,con:0,pow:0,agi:2,dex:0,int:0,mp:0,hp:0,sm:0,mp:0 },
+  wizard: { str:0,con:0,pow:0,agi:0,dex:0,int:0,mp:0,hp:0,sm:8,mp:0 },
+  supporter: { str:0,con:0,pow:0,agi:0,dex:0,int:0,mp:0,hp:0,sm:0,mp:6 },
+  puroducer: { str:0,con:0,pow:0,agi:0,dex:2,int:0,mp:0,hp:0,sm:0,mp:0 },
+  none: { str:0,con:0,pow:0,agi:0,dex:0,int:0,mp:0,hp:0,sm:0,mp:0 }
 };
 
 const subJobs ={
-  warrior: { str:0,con:0,pow:0,agi:0,dex:0,mp:0,hp:7,sm:0,mp:0 },
-  archer: { str:0,con:0,pow:0,agi:1,dex:0,mp:0,hp:0,sm:0,mp:0 },
-  wizard: { str:0,con:0,pow:0,agi:0,dex:0,mp:0,hp:0,sm:6,mp:0 },
-  supporter: { str:0,con:0,pow:0,agi:0,dex:0,mp:0,hp:0,sm:0,mp:3 },
-  puroducer: { str:0,con:0,pow:0,agi:0,dex:1,mp:0,hp:0,sm:0,mp:0 },
-  none:{ str:0,con:0,pow:0,agi:0,dex:0,mp:0,hp:0,sm:0,mp:0 }
+  warrior: { str:0,con:0,pow:0,agi:0,dex:0,int:0,mp:0,hp:7,sm:0,mp:0 },
+  archer: { str:0,con:0,pow:0,agi:1,dex:0,int:0,mp:0,hp:0,sm:0,mp:0 },
+  wizard: { str:0,con:0,pow:0,agi:0,dex:0,int:0,mp:0,hp:0,sm:6,mp:0 },
+  supporter: { str:0,con:0,pow:0,agi:0,dex:0,int:0,mp:0,hp:0,sm:0,mp:3 },
+  puroducer: { str:0,con:0,pow:0,agi:0,dex:1,int:0,mp:0,hp:0,sm:0,mp:0 },
+  none:{ str:0,con:0,pow:0,agi:0,dex:0,int:0,mp:0,hp:0,sm:0,mp:0 }
 };
+
+
+
 
 // =====================
 // ステータス計算
@@ -44,9 +47,11 @@ function updateStatus() {
   const int_daice = Number(document.getElementById("int-daice").value);
   const con_daice = Number(document.getElementById("con-daice").value);
   const pow_daice = Number(document.getElementById("pow-daice").value);
-  const agi_daice = Number(document.getElementById("agi-daice").value);;
+  const agi_daice = Number(document.getElementById("agi-daice").value);
   const mp_daice = Number(document.getElementById("mp-daice").value);
   const sm_daice = Number(document.getElementById("sm-daice").value);
+  const luck_daice = Number(document.getElementById("luck-daice").value);
+  const memory_daice = Number(document.getElementById("memory-daice").value);
 
  
   const str_quote = Number(document.getElementById("str-quota").value);
@@ -58,6 +63,21 @@ function updateStatus() {
   const hp_quota = Number(document.getElementById("hp-quota").value);
   const mp_quota = Number(document.getElementById("mp-quota").value);
   const sm_quota = Number(document.getElementById("sm-quota").value);
+  const luck_quota = Number(document.getElementById("luck-quota").value);
+  const memory_quota = Number(document.getElementById("memory-quota").value);
+
+  const str_correction = Number(document.getElementById("str-correction").value);
+  const con_correction = Number(document.getElementById("con-correction").value);
+  const pow_correction = Number(document.getElementById("pow-correction").value);
+  const agi_correction = Number(document.getElementById("agi-correction").value);
+  const dex_correction = Number(document.getElementById("dex-correction").value);
+  const int_correction = Number(document.getElementById("int-correction").value);
+  const hp_correction = Number(document.getElementById("hp-correction").value);
+  const mp_correction = Number(document.getElementById("mp-correction").value);
+  const sm_correction = Number(document.getElementById("sm-correction").value);
+  const luck_correction = Number(document.getElementById("luck-correction").value);
+  const memory_correction = Number(document.getElementById("memory-correction").value);
+
 
   const specie = document.getElementById("specie").value;
   const meinJob = document.getElementById("mein-job").value;
@@ -69,21 +89,20 @@ function updateStatus() {
   const subJobBonus = subJobs[subJob];
 
 
-  const str_true = str_daice+str_quote+base.str;
-  const dex_true = dex_daice+dex_quota+base.dex+meinJobBonus.dex+subJobBonus.dex;
-  const int_true = int_daice+int_quota+base.int;
-  const con_true = con_daice+con_quota+base.con;
-  const pow_true = pow_daice+pow_quota+base.pow;
-  const agi_true = agi_daice+agi_quota+base.agi+meinJobBonus.agi+subJobBonus.agi;
-
+  const str_true = str_daice+str_quote+base.str+str_correction;
+  const dex_true = dex_daice+dex_quota+base.dex+dex_correction+meinJobBonus.dex+subJobBonus.dex;
+  const int_true = int_daice+int_quota+base.int+int_correction;
+  const con_true = con_daice+con_quota+base.con+con_correction;
+  const pow_true = pow_daice+pow_quota+base.pow+pow_correction;
+  const agi_true = agi_daice+agi_quota+base.agi+agi_correction+meinJobBonus.agi+subJobBonus.agi;
 
   
 
-  document.getElementById("str-race").textContent = base.str;
+  document.getElementById("str-race").textContent = base.str+meinJobBonus.str+subJobBonus.str;
   document.getElementById("dex-race").textContent = base.dex+meinJobBonus.dex+subJobBonus.dex;
-  document.getElementById("int-race").textContent = base.int;
-  document.getElementById("con-race").textContent = base.con;
-  document.getElementById("pow-race").textContent = base.pow;
+  document.getElementById("int-race").textContent = base.int+meinJobBonus.int+subJobBonus.int;
+  document.getElementById("con-race").textContent = base.con+meinJobBonus.con+subJobBonus.con;
+  document.getElementById("pow-race").textContent = base.pow+meinJobBonus.pow+subJobBonus.pow;
   document.getElementById("agi-race").textContent = base.agi+meinJobBonus.agi+subJobBonus.agi;
 
 
@@ -100,12 +119,14 @@ function updateStatus() {
 
 
   const hp_race = base.hp +(con_daice+base.con)*2+ meinJobBonus.hp + subJobBonus.hp;
-  const mp_race =Math.floor((pow_daice+base.pow)/ 2) + meinJobBonus.mp + subJobBonus.mp;
+  const mp_race =Math.ceil((pow_daice+base.pow)/ 2) + meinJobBonus.mp + subJobBonus.mp;
   const sm_race = base.sm + meinJobBonus.sm + subJobBonus.sm;
 
-  const hp_true = hp_race + hp_quota;
-  const mp_true = mp_race + mp_daice + mp_quota; 
-  const sm_true = sm_race + sm_daice + sm_quota;
+  const hp_true = hp_race + hp_quota+ hp_correction;
+  const mp_true = mp_race + mp_daice + mp_quota+ mp_correction; 
+  const sm_true = sm_race + sm_daice + sm_quota+ sm_correction;
+  const luck_true = luck_daice + luck_quota + luck_correction;
+  const memory_true = memory_daice + memory_quota + memory_correction;
 
 
   document.getElementById("hp-race").textContent = hp_race;
@@ -115,7 +136,105 @@ function updateStatus() {
   document.getElementById("hp-true").textContent = hp_true;
   document.getElementById("mp-true").textContent = mp_true;
   document.getElementById("sm-true").textContent = sm_true;
+  document.getElementById("luck-true").textContent = luck_true;
+  document.getElementById("memory-true").textContent = memory_true;
 
+}
+
+// =====================
+// ダイスロール
+// =====================
+function rollDice(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+const diceRules = {
+  "1d3": () => rollDice(1, 3),
+  "1d4": () => rollDice(1, 4),
+  "1d6": () => rollDice(1, 6),
+  "3d8": () => rollDice(1, 8) + rollDice(1, 8) + rollDice(1, 8),
+  "1d6-1": () => rollDice(1, 6) - 1,
+  "1d6+2": () => rollDice(1, 6) + 2,
+  "1d11-1": () => rollDice(1,11) - 1,
+  "1d7-1": () => rollDice(1,7)-1,
+  "1d2-1": () => rollDice(1,2)-1,
+  "1d3-1": () => rollDice(1,3)-1,
+  "0":()=>0
+};
+
+const raceDiceMap = {
+  human: {
+    luck: "1d11-1",
+    mp: "1d7-1"
+  },
+  Warbeast: {
+  luck: "0",
+  mp:"1d2-1"
+  },
+  Hobbit: {
+    luck: "0",
+    mp:"1d3"
+  },
+  Elf: {
+    luck: "0",
+    mp:"1d6+2"
+  },
+  Dwarf: {
+    luck: "0",
+    mp:"1d3-1"
+  },
+  lizard:{
+    luck: "0",
+    mp:"1d4-1"
+  },
+  fisher:{
+    luck: "0",
+    mp:"0"
+  }
+
+};
+
+
+
+function rollStat(inputId, rollFunc) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+
+  input.value = rollFunc();
+  updateStatus();
+}
+ 
+function roll_MP_Luck(statKey) {
+  const race = document.getElementById("specie").value;
+  const raceRule = raceDiceMap[race];
+  if (!raceRule) return;
+
+  const ruleKey = raceRule[statKey];
+  const rollFunc = diceRules[ruleKey];
+  if (!rollFunc) return;
+
+  const input = document.getElementById(`${statKey}-daice`);
+  input.value = rollFunc();
+
+  updateStatus();
+}
+
+
+
+function basic_rollAllStats() {
+  rollStat("str-daice", diceRules["1d6"]);
+  rollStat("dex-daice", diceRules["1d6-1"]);
+  rollStat("int-daice", diceRules["1d6-1"]);
+  rollStat("con-daice", diceRules["1d6"]);
+  rollStat("pow-daice", diceRules["1d6"]);
+  rollStat("agi-daice", diceRules["1d6"]);
+}
+
+function add_rollAllStats() {
+  rollStat("sm-daice", diceRules["3d8"]);
+  rollStat("memory-daice", diceRules["1d4"]);
+  roll_MP_Luck("mp");
+  roll_MP_Luck("luck");
 }
 
 // =====================
@@ -219,6 +338,7 @@ function showScreen(screen) {
 
   if (screen === "view") {
     updateView();
+    renderViewItemList();
   }
 
   if (screen === "list") {
@@ -266,6 +386,10 @@ function updateView() {
     document.getElementById("mp-true").textContent;
   document.getElementById("sm-view").textContent =
     document.getElementById("sm-true").textContent;
+  document.getElementById("luck-view").textContent =
+    document.getElementById("luck-true").textContent;
+  document.getElementById("memory-view").textContent =
+    document.getElementById("memory-true").textContent;
 
     const raceSelect = document.getElementById("specie");
   const raceName = raceSelect.options[raceSelect.selectedIndex].text;
@@ -273,6 +397,28 @@ function updateView() {
 
 }
 
+function renderViewItemList() {
+  const tbody = document.getElementById("view-item-list");
+  tbody.innerHTML = "";
+
+  currentItems.forEach(item => {
+    const tr = document.createElement("tr");
+
+    const nameTd = document.createElement("td");
+    nameTd.textContent = item.name;
+    tr.appendChild(nameTd);
+
+    const qtyTd = document.createElement("td");
+    qtyTd.textContent = item.quantity;
+    tr.appendChild(qtyTd);
+
+    const noteTd = document.createElement("td");
+    noteTd.textContent = item.note || "";
+    tr.appendChild(noteTd);
+
+    tbody.appendChild(tr);
+  });
+}
 
 
 
@@ -318,6 +464,8 @@ function saveCharacter() {
     agi_daice: document.getElementById("agi-daice").value,
     mp_daice: document.getElementById("mp-daice").value,
     sm_daice: document.getElementById("sm-daice").value,
+    luck_daice: document.getElementById("luck-daice").value,
+    memory_daice: document.getElementById("memory-daice").value,
 
     str_quota: document.getElementById("str-quota").value,
     dex_quota: document.getElementById("dex-quota").value,
@@ -328,6 +476,20 @@ function saveCharacter() {
     hp_quota: document.getElementById("hp-quota").value,
     mp_quota: document.getElementById("mp-quota").value,
     sm_quota: document.getElementById("sm-quota").value,
+    luck_quota: document.getElementById("luck-quota").value,
+    memory_quota: document.getElementById("memory-quota").value,
+
+    str_correction: document.getElementById("str-correction").value,
+    dex_correction: document.getElementById("dex-correction").value,
+    int_correction: document.getElementById("int-correction").value,
+    con_correction: document.getElementById("con-correction").value,
+    pow_correction: document.getElementById("pow-correction").value,
+    agi_correction: document.getElementById("agi-correction").value,
+    hp_correction: document.getElementById("hp-correction").value,
+    mp_correction: document.getElementById("mp-correction").value,
+    sm_correction: document.getElementById("sm-correction").value,
+    luck_correction: document.getElementById("luck-correction").value,
+    memory_correction: document.getElementById("memory-correction").value,
 
     specie: document.getElementById("specie").value,
     meinJob: document.getElementById("mein-job").value,
@@ -373,6 +535,8 @@ function loadCharacterById(id) {
   document.getElementById("agi-daice").value = character.agi_daice;
   document.getElementById("mp-daice").value = character.mp_daice;
   document.getElementById("sm-daice").value = character.sm_daice;
+  document.getElementById("luck-daice").value = character.luck_daice;
+  document.getElementById("memory-daice").value = character.memory_daice;
 
   document.getElementById("str-quota").value = character.str_quota;
   document.getElementById("dex-quota").value = character.dex_quota;
@@ -383,18 +547,38 @@ function loadCharacterById(id) {
   document.getElementById("hp-quota").value = character.hp_quota;
   document.getElementById("mp-quota").value = character.mp_quota;
   document.getElementById("sm-quota").value = character.sm_quota;
+  document.getElementById("luck-quota").value = character.luck_quota;
+  document.getElementById("memory-quota").value = character.memory_quota;
+
+  document.getElementById("str-correction").value = character.str_correction;
+  document.getElementById("dex-correction").value = character.dex_correction;
+  document.getElementById("int-correction").value = character.int_correction;
+  document.getElementById("con-correction").value = character.con_correction;
+  document.getElementById("pow-correction").value = character.pow_correction;
+  document.getElementById("agi-correction").value = character.agi_correction;
+  document.getElementById("hp-correction").value = character.hp_correction;
+  document.getElementById("mp-correction").value = character.mp_correction;
+  document.getElementById("sm-correction").value = character.sm_correction;
+  document.getElementById("luck-correction").value = character.luck_correction;
+  document.getElementById("memory-correction").value = character.memory_correction;
 
   document.getElementById("specie").value = character.specie;
   document.getElementById("mein-job").value = character.meinJob;
   document.getElementById("sub-job").value = character.subJob;
 
-  currentItems = character.items || [];
+  currentItems = (character.items || []).map(item => ({ ...item }));
+
 
 
 
   updateStatus();
   updateView();
   renderItemList();
+
+if (currentScreen === "view") {
+  renderViewItemList();
+}
+
 
 }
 

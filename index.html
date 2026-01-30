@@ -63,12 +63,17 @@
 <!-- 能力値欄（可変）-->
 
 <h2>基本ステータス</h2>
+
+<button type="button" onclick="basic_rollAllStats()">🎲 一括ロール</button>
+
+
 <table class="status-table">
   <tr>
     <th>ステータス名</th>
     <th>基礎値</th>
     <th>ダイス値</th>
     <th>割り振り</th>
+    <th>補正値 </th>
     <th>決定値</th>
   </tr>
 
@@ -77,6 +82,7 @@
     <td><span id="str-race">0</span></td>
     <td><input type="number" id="str-daice" value="0"></td>
     <td><input type="number" id="str-quota" value="0"></td>
+    <td><input type="number" id="str-correction" value="0"></td>
     <td><span id="str-true">0</span></td>
   </tr>
 
@@ -85,6 +91,7 @@
     <td><span id="con-race">0</span></td>
     <td><input type="number" id="con-daice" value="0"></td>
     <td><input type="number" id="con-quota" value="0"></td>
+    <td><input type="number" id="con-correction" value="0"></td>
     <td><span id="con-true">0</span></td>
   </tr>
 
@@ -93,6 +100,7 @@
     <td><span id="pow-race">0</span></td>
     <td><input type="number" id="pow-daice" value="0"></td>
     <td><input type="number" id="pow-quota" value="0"></td>
+    <td><input type="number" id="pow-correction" value="0"></td>
     <td><span id="pow-true">0</span></td>
   </tr>
 
@@ -101,6 +109,7 @@
     <td><span id="agi-race">0</span></td>
     <td><input type="number" id="agi-daice" value="0"></td>
     <td><input type="number" id="agi-quota" value="0"></td>
+    <td><input type="number" id="agi-correction" value="0"></td>
     <td><span id="agi-true">0</span></td>
   </tr>
 
@@ -109,6 +118,7 @@
     <td><span id="dex-race">0</span></td>
     <td><input type="number" id="dex-daice" value="0"></td>
     <td><input type="number" id="dex-quota" value="0"></td>
+    <td><input type="number" id="dex-correction" value="0"></td>
     <td><span id="dex-true">0</span></td>
   </tr>
 
@@ -117,12 +127,12 @@
     <td><span id="int-race">0</span></td>
     <td><input type="number" id="int-daice" value="0"></td>
     <td><input type="number" id="int-quota" value="0"></td>
+    <td><input type="number" id="int-correction" value="0"></td>
     <td><span id="int-true">0</span></td>
   </tr>
 
   
 </table>
-＊ダイスの値はSTR,CON,POW,AGI→1d6  /  DEX,IDA→1d6-1
 
 
 
@@ -133,12 +143,15 @@
 
 <h2>追加ステータス</h2>
 
+<button type="button" onclick="add_rollAllStats()">🎲 一括ロール(幸運、MP抜き)</button>
+
 <table class="status-table">
   <tr>
     <th>ステータス名</th>
     <th>基礎値</th>
     <th>ダイス値</th>
     <th>割り振り</th>
+    <th>補正値</th>
     <th>決定値</th>
   </tr>
 
@@ -147,6 +160,7 @@
     <td><span id="hp-race">0</span></td>
     <td></td>
     <td><input type="number" id="hp-quota" value="0"></td>
+    <td><input type="number" id="hp-correction" value="0"></td>
     <td><span id="hp-true">0</span></td>
   </tr>
 
@@ -155,16 +169,38 @@
     <td><span id="mp-race">0</span></td>
     <td><input type="number" id="mp-daice" value="0"></td>
     <td><input type="number" id="mp-quota" value="0"></td>
+    <td><input type="number" id="mp-correction" value="0"></td>
     <td><span id="mp-true">0</span></td>
   </tr>
 
   <tr>
     <td>スタミナ</td>
     <td><span id="sm-race">0</span></td>
-    <td> <input type="number" id="sm-daice" value="0"></td>
+    <td><input type="number" id="sm-daice" value="0"></td>
     <td><input type="number" id="sm-quota" value="0"></td>
+    <td><input type="number" id="sm-correction" value="0"></td>
     <td><span id="sm-true">0</span></td>
   </tr>
+
+  <tr> 
+    <td>幸運</td>
+    <td>0</td>
+    <td><input type="number" id="luck-daice" value="0"></td>
+    <td><input type="number" id="luck-quota" value="0"></td>
+    <td><input type="number" id="luck-correction" value="0"></td>
+    <td><span id="luck-true">0</span></td>
+  </tr>
+
+  <tr> 
+    <td>記憶力</td>
+    <td>2</td>
+    <td><input type="number" id="memory-daice" value="0"></td>
+    <td><input type="number" id="memory-quota" value="0"></td>
+    <td><input type="number" id="memory-correction" value="0"></td>
+    <td><span id="memory-true">0</span></td>
+  </tr>
+
+
 
 </table>
 
@@ -213,6 +249,11 @@
 
 </div>
 
+
+<!--------------->
+<!-- View Mode -->
+<!--------------->
+
 <div id="view-area"  style="display: none;">
   <h2>閲覧</h2>
 
@@ -247,29 +288,46 @@
       </tr>
 
       <tr>
-        <th>敏捷性</th>
+        <th>AGI</th>
         <th><span id="agi-view">0</span></th>
         <th></th>
-        <th></th>
-        <th></th>
+        <th>幸運</th>
+        <th><span id="luck-view">0</span></th>
       </tr>
 
       <tr>
-        <th>器用度</th>
+        <th>DEX</th>
         <th><span id="dex-view">0</span></th>
         <th></th>
-        <th></th>
-        <th></th>
+        <th>記憶力</th>
+        <th><span id="memory-view">0</span></th>
       </tr>
 
       <tr>
-        <th>発想力</th>
+        <th>IDA</th>
         <th><span id="int-view">0</span></th>
         <th></th>
         <th></th>
         <th></th>
       </tr>
     </table>
+
+<h2>所持品</h2>
+
+<table class="item-table">
+  <thead>
+    <tr>
+      <th>アイテム名</th>
+      <th>個数</th>
+      <th>備考</th>
+    </tr>
+  </thead>
+  <tbody id="view-item-list">
+    <!-- JSで表示 -->
+  </tbody>
+</table>
+
+
   </div>
 
 <div id="list-area" style="display:none;">
