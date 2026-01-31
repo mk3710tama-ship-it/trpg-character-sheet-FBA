@@ -5,7 +5,7 @@
 body {
   font-family: sans-serif;
   background-color: #f0f0f0;
-  padding-bottom: 60px;
+  padding-bottom: 180px;
 }
 
 @media (max-width: 600px) {
@@ -18,24 +18,58 @@ h1 {
   color: #333;
 }
 
-body {
-  padding-bottom: 180px;
+  
+
+
+
+/*===================*/ 
+/* Bottom Bar Styles */
+/*===================*/
+
+.negative {
+  color: #e53935;
+  font-weight: bold;
 }
+
+.bottom-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ボタン行 */
+.bottom-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+
+#point-summary,
+#skill-point-summary {
+  display: inline-block;
+  margin: 0 auto;
+  padding: 6px 14px;
+  min-width: 260px;
+
+  text-align: center;
+  font-weight: 500;
+
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #f9f9f9;
+}
+
+
 
 @media (max-width: 768px) {
   body {
     padding-bottom: 140px;
   }
-
   #bottom-bar {
     min-height: 120px;
     padding: 16px;
   }
-}
-
-.negative {
-  color: #e53935;
-  font-weight: bold;
 }
 
 

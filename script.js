@@ -377,6 +377,129 @@ function add_rollAllStats() {
   roll_MP_Luck("luck");
 }
 
+//=====================
+//スキル管理
+//=====================
+
+const skillMaster = [
+  {
+    id: "power_attack",
+    name: "パワーアタック",
+    minLevel: 1,
+    maxLevel: 5,
+    costPerLevel: 1,
+    effect: "近接攻撃のダメージが増加する"
+  },
+  {
+    id: "quick_cast",
+    name: "クイックキャスト",
+    minLevel: 1,
+    maxLevel: 3,
+    costPerLevel: 2,
+    effect: "詠唱時間を短縮する"
+  }
+];
+
+let characterSkills = [];
+
+
+function renderSkillSelect() {
+  const select = document.getElementById("skill-select");
+  select.innerHTML = '<option value="">スキルを選択</option>';
+
+  skillMaster.forEach(skill => {
+    const opt = document.createElement("option");
+    opt.value = skill.id;
+    opt.textContent = skill.name;
+    select.appendChild(opt);
+  });
+}
+
+function addSkill() {
+  const id = document.getElementById("skill-select").value;
+  if (!id) return;
+
+  if (characterSkills.some(s => s.id === id)) {
+    alert("すでに取得しています");
+    return;
+  }
+
+  characterSkills.push({ id, level: 1 });
+  recalcSkillPointUsed();
+  renderSkillList();
+}
+
+function renderSkillList() {
+  const ul = document.getElementById("skill-list");
+  ul.innerHTML = "";
+
+  characterSkills.forEach(skillData => {
+    const master = skillMaster.find(s => s.id === skillData.id);
+    if (!master) return;
+
+    const li = document.createElement("li");
+
+    // 名前
+    const name = document.createElement("div");
+    name.textContent = master.name;
+    li.appendChild(name);
+
+    // レベル操作
+    const level = document.createElement("div");
+
+    const down = document.createElement("button");
+    down.textContent = "−";
+    down.onclick = () => changeSkillLevel(skillData.id, -1);
+
+    const lv = document.createElement("span");
+    lv.textContent = `Lv.${skillData.level}`;
+
+    const up = document.createElement("button");
+    up.textContent = "＋";
+    up.onclick = () => changeSkillLevel(skillData.id, 1);
+
+    level.append(down, lv, up);
+    li.appendChild(level);
+
+    // 効果（表示のみ）
+    const effect = document.createElement("div");
+    effect.textContent = master.effect;
+    effect.className = "skill-effect";
+    li.appendChild(effect);
+
+    ul.appendChild(li);
+  });
+}
+
+function changeSkillLevel(skillId, diff) {
+  const skill = characterSkills.find(s => s.id === skillId);
+  const master = skillMaster.find(s => s.id === skillId);
+  if (!skill || !master) return;
+
+  const next = skill.level + diff;
+  if (next < master.minLevel || next > master.maxLevel) return;
+
+  skill.level = next;
+  recalcSkillPointUsed();
+  renderSkillList();
+}
+
+function recalcSkillPointUsed() {
+  skillPoints.used = characterSkills.reduce((sum, skill) => {
+    const master = skillMaster.find(s => s.id === skill.id);
+    if (!master) return sum;
+    return sum + skill.level * master.costPerLevel;
+  }, 0);
+
+  updateSkillPointBar();
+}
+
+
+
+
+
+
+
 // =====================
 // アイテム管理
 // =====================
@@ -636,7 +759,8 @@ function saveCharacter() {
     subJob: document.getElementById("sub-job").value,
     items: currentItems,
     allocation: allocation,
-    skillPoints: skillPoints
+    skillPoints: skillPoints,
+    skills: characterSkills
 
 
   };
@@ -723,6 +847,11 @@ skillPoints = character.skillPoints || {
   levelBonus: 0,
   used: 0
 };
+
+characterSkills = character.skills || [];
+recalcSkillPointUsed();
+renderSkillList();
+
 
 
 
@@ -900,3 +1029,5 @@ updateView();
 renderCharacterList();
 updateAllocationBar();
 updateSkillPointBar();
+renderSkillSelect();
+renderSkillList();

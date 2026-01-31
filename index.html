@@ -251,6 +251,21 @@
 <ul id="item-list"></ul>
 
 
+<select id="skill-select">
+  <option value="">スキルを選択</option>
+  <option value="power-attack">攻撃</option>
+  <option value="quick-cast">防御</option>
+</select>
+
+<button type="button" onclick="addSkill()">取得</button>
+
+<h3>スキル一覧</h3>
+<ul id="skill-list" class="skill-list">
+  <!-- JSで行を追加 -->
+</ul>
+
+
+
 
 
 
@@ -356,14 +371,26 @@
 </div>
 
 
+
+
   <div id="bottom-bar">
-  <br><span id="skill-point-summary"></span>&emsp;<span id="point-summary"></span></br>
 
+  <div class="bottom-row">
+    <span id="point-summary"></span>
+  </div>
 
-  <button id="btn-edit">編集</button>
-  <button id="btn-view">閲覧</button>
-  <button id="btn-list">キャラ一覧</button>
+  <div class="bottom-row">
+    <span id="skill-point-summary"></span>
+  </div>
+
+  <div class="bottom-row bottom-actions">
+    <button id="btn-edit">編集</button>
+    <button id="btn-view">閲覧</button>
+    <button id="btn-list">キャラ一覧</button>
+  </div>
+
 </div>
+
 
 
 
