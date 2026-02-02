@@ -60,6 +60,18 @@ h1 {
   background: #f9f9f9;
 }
 
+.skill-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.skill-delete-btn {
+  padding: 2px 6px;
+  font-size: 12px;
+}
+
 
 
 @media (max-width: 768px) {
@@ -72,6 +84,9 @@ h1 {
   }
 }
 
+.hidden {
+  display: none !important;
+}
 
 
 
@@ -118,7 +133,88 @@ h1 {
   font-size: 12px;
 }
 
+/*=====================*/
+/* skill table Styles  */
+/*=====================*/
 
+.skill-table {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 6px;
+  margin-bottom: 10px;
+  background: #fff;
+}
+
+.skill-search-list {
+  border: 1px solid #ccc;
+  max-height: 160px;
+  overflow-y: auto;
+  margin-top: 4px;
+  padding: 0;
+  list-style: none;
+  background: #fff;
+}
+
+.skill-search-list li {
+  padding: 6px 8px;
+  cursor: pointer;
+}
+
+.skill-search-list li:hover {
+  background: #eee;
+}
+
+.skill-search-list li.selected {
+  background: #cce5ff;
+}
+
+
+/* 行共通 */
+.skill-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 上段 */
+.skill-header {
+  font-weight: bold;
+}
+
+/* 下段 */
+.skill-footer {
+  margin-top: 4px;
+  font-size: 0.9em;
+}
+
+/* 説明は横いっぱい */
+.skill-effect {
+  grid-column: 1 / 4;
+  color: #555;
+}
+
+/* レベル表示 */
+.skill-level {
+  min-width: 48px;
+  text-align: center;
+}
+
+/* ±ボタン */
+.skill-btn {
+  padding: 2px 8px;
+  font-size: 14px;
+}
+
+/* 削除 */
+.skill-delete-btn {
+  grid-column: 4;
+  font-size: 12px;
+  color: #c62828;
+  border: 1px solid #c62828;
+  background: #fff;
+  border-radius: 4px;
+}
 
 
 
@@ -132,6 +228,46 @@ h1 {
   display: none;
   pointer-events: none;
 }
+
+/*==========================*/
+/* character select Styles  */
+/*==========================*/
+
+.character-table {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.character-row {
+  display: grid;
+  grid-template-columns: 1fr 72px 72px 72px;
+  align-items: center;
+  padding: 8px 10px;
+  border-top: 1px solid #eee;
+}
+
+.character-row.header {
+  font-weight: bold;
+  background: #f5f5f5;
+  border-top: none;
+}
+
+.character-row button {
+  padding: 4px 6px;
+  font-size: 14px;
+}
+
+.character-row:not(.header):hover {
+  background: #f9f9f9;
+}
+
+/* 削除だけ少し目立たせる（任意） */
+.character-row .delete {
+  color: #c00;
+}
+
 
 
 /*===================*/

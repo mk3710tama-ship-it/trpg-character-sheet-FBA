@@ -217,6 +217,15 @@ function updateAllocationBar() {
   updateSkillPointBar();
 }
 
+function confirmAllocationByChoice() {
+  const message =
+     "現在の初期割り振りポイント値は失われますが、よろしいですか？";
+
+  if (!confirm(message)) return;
+
+  initAllocationByChoice();
+}
+
 
 function initAllocationByChoice() {
   const selected = document.querySelector(
@@ -359,6 +368,19 @@ function roll_MP_Luck(statKey) {
   updateStatus();
 }
 
+function confirmRollAllStats(type) {
+  const message =
+    "すべてのステータスを一括でロールします。\n"
+    + "現在の値は失われますが、よろしいですか？";
+
+  if (!confirm(message)) return;
+
+  if (type === "basic") {
+    basic_rollAllStats();
+  } else if (type === "additional") {
+    add_rollAllStats();
+  }
+}
 
 
 function basic_rollAllStats() {
@@ -382,22 +404,39 @@ function add_rollAllStats() {
 //=====================
 
 const skillMaster = [
+  {id: "power_attack",
+  name: "パワーアタック",
+  minLevel: 1,
+  maxLevel: 3,
+  cost: {
+  acquire: 3,   // Lv0 → Lv1
+  perLevel: 1   // Lv1 → Lv2 以降
+}
+,
+
+  effects: {
+    1: "ダメージ +2",
+    2: "ダメージ +4",
+    3: "ダメージ +7"
+  }},
+
   {
-    id: "power_attack",
-    name: "パワーアタック",
-    minLevel: 1,
-    maxLevel: 5,
-    costPerLevel: 1,
-    effect: "近接攻撃のダメージが増加する"
-  },
-  {
-    id: "quick_cast",
-    name: "クイックキャスト",
-    minLevel: 1,
-    maxLevel: 3,
-    costPerLevel: 2,
-    effect: "詠唱時間を短縮する"
+  id: "quick_cast",
+  name: "クイックキャスト",
+  minLevel: 1,
+  maxLevel: 3,
+  cost: {
+  acquire: 5,   // Lv0 → Lv1
+  perLevel: 2   // Lv1 → Lv2 以降
+},
+
+  effects: {
+    1: "詠唱時間 -1",
+    2: "詠唱時間 -2",
+    3: "詠唱時間 -3"
   }
+}
+
 ];
 
 let characterSkills = [];
@@ -438,38 +477,52 @@ function renderSkillList() {
     if (!master) return;
 
     const li = document.createElement("li");
+    li.className = "skill-table";
 
-    // 名前
+    /* 上段 */
+    const header = document.createElement("div");
+    header.className = "skill-row skill-header";
+
     const name = document.createElement("div");
     name.textContent = master.name;
-    li.appendChild(name);
-
-    // レベル操作
-    const level = document.createElement("div");
 
     const down = document.createElement("button");
     down.textContent = "−";
+    down.className = "skill-btn";
     down.onclick = () => changeSkillLevel(skillData.id, -1);
 
-    const lv = document.createElement("span");
-    lv.textContent = `Lv.${skillData.level}`;
+    const level = document.createElement("div");
+    level.className = "skill-level";
+    level.textContent = `Lv.${skillData.level}`;
 
     const up = document.createElement("button");
     up.textContent = "＋";
+    up.className = "skill-btn";
     up.onclick = () => changeSkillLevel(skillData.id, 1);
 
-    level.append(down, lv, up);
-    li.appendChild(level);
+    header.append(name, down, level, up);
 
-    // 効果（表示のみ）
+    /* 下段 */
+    const footer = document.createElement("div");
+    footer.className = "skill-row skill-footer";
+
     const effect = document.createElement("div");
-    effect.textContent = master.effect;
     effect.className = "skill-effect";
-    li.appendChild(effect);
+    effect.textContent = getSkillEffectText(skillData, master);
 
+    const del = document.createElement("button");
+    del.className = "skill-delete-btn";
+    del.textContent = "削除";
+    del.onclick = () => removeSkill(skillData.id);
+
+    footer.append(effect, del);
+
+    li.append(header, footer);
     ul.appendChild(li);
   });
 }
+
+
 
 function changeSkillLevel(skillId, diff) {
   const skill = characterSkills.find(s => s.id === skillId);
@@ -484,17 +537,108 @@ function changeSkillLevel(skillId, diff) {
   renderSkillList();
 }
 
+function calcSkillCost(skillData, master) {
+  if (!master.cost) return 0;
+
+  if (skillData.level <= 0) return 0;
+
+  return (
+    master.cost.acquire +
+    (skillData.level - 1) * master.cost.perLevel
+  );
+}
+
 function recalcSkillPointUsed() {
   skillPoints.used = characterSkills.reduce((sum, skill) => {
     const master = skillMaster.find(s => s.id === skill.id);
     if (!master) return sum;
-    return sum + skill.level * master.costPerLevel;
+
+    return sum + calcSkillCost(skill, master);
   }, 0);
 
   updateSkillPointBar();
 }
 
 
+function removeSkill(skillId) {
+  const skill = characterSkills.find(s => s.id === skillId);
+  const master = skillMaster.find(s => s.id === skillId);
+  if (!skill || !master) return;
+
+  const message =
+    `スキル「${master.name}」を削除します。\n` 
+  if (!confirm(message)) return;
+
+  characterSkills = characterSkills.filter(s => s.id !== skillId);
+
+  recalcSkillPointUsed();
+  renderSkillList();
+}
+
+function getSkillEffectText(skillData, master) {
+  if (!master.effects) return master.effect || "";
+
+  return master.effects[skillData.level]
+    ?? master.effects[master.maxLevel]
+    ?? "";
+}
+
+let selectedSkillId = null;
+
+const searchInput = document.getElementById("skill-search");
+const searchList = document.getElementById("skill-search-list");
+
+searchInput.addEventListener("input", () => {
+  const keyword = searchInput.value.trim().toLowerCase();
+  renderSkillSearchList(keyword);
+});
+
+function renderSkillSearchList(keyword = "") {
+  searchList.innerHTML = "";
+  selectedSkillId = null;
+
+  skillMaster
+    .filter(skill =>
+      skill.name.toLowerCase().includes(keyword)
+    )
+    .forEach(skill => {
+      const li = document.createElement("li");
+      li.textContent = skill.name;
+
+      li.onclick = () => {
+        selectedSkillId = skill.id;
+
+        // 選択状態の見た目
+        [...searchList.children].forEach(el =>
+          el.classList.remove("selected")
+        );
+        li.classList.add("selected");
+      };
+
+      searchList.appendChild(li);
+    });
+}
+
+function addSkillFromSearch() {
+  if (!selectedSkillId) {
+    alert("スキルを選択してください");
+    return;
+  }
+
+  if (characterSkills.some(s => s.id === selectedSkillId)) {
+    alert("すでに取得しています");
+    return;
+  }
+
+  characterSkills.push({ id: selectedSkillId, level: 1 });
+  recalcSkillPointUsed();
+  renderSkillList();
+
+  // 入力リセット
+  searchInput.value = "";
+  searchList.innerHTML = "";
+  selectedSkillId = null;
+}
 
 
 
@@ -587,6 +731,7 @@ document.getElementById("add-item").addEventListener("click", () => {
 let currentScreen = "edit"; // edit / view / list
 function showScreen(screen) {
   currentScreen = screen;
+  toggleBottomBar(screen)
 
   document.getElementById("edit-area").style.display =
     screen === "edit" ? "block" : "none";
@@ -886,33 +1031,39 @@ function renderCharacterList() {
   const characters = getCharacters();
 
   characters.forEach(character => {
-    const li = document.createElement("li");
+    const row = document.createElement("div");
+    row.className = "character-row";
 
-    const nameSpan = document.createElement("span");
-    nameSpan.textContent = character.name || "無名キャラ";
+    const name = document.createElement("div");
+    name.textContent = character.name || "無名キャラ";
 
-    const loadBtn = document.createElement("button");
-    loadBtn.textContent = "読み込み";
-    loadBtn.onclick = () => {
+    const editBtn = document.createElement("button");
+    editBtn.textContent = "編集";
+    editBtn.onclick = () => {
       loadCharacterById(character.id);
       showScreen("edit");
     };
 
+    const viewBtn = document.createElement("button");
+    viewBtn.textContent = "閲覧";
+    viewBtn.onclick = () => {
+      loadCharacterById(character.id);
+      showScreen("view");
+    };
+
     const deleteBtn = document.createElement("button");
     deleteBtn.textContent = "削除";
-  deleteBtn.onclick = () => {
-  currentCharacterId = character.id;
-  deleteCharacter();
-};
+    deleteBtn.className = "delete";
+    deleteBtn.onclick = () => {
+      if (!confirm("このキャラクターを削除しますか？")) return;
+      deleteCharacter(character.id);
+      renderCharacterList();
+    };
 
-    li.appendChild(nameSpan);
-    li.appendChild(loadBtn);
-    li.appendChild(deleteBtn);
-
-    list.appendChild(li);
+    row.append(name, editBtn, viewBtn, deleteBtn);
+    list.appendChild(row);
   });
 }
-
 
 
 
@@ -989,6 +1140,18 @@ function deleteCharacter() {
 
   alert("キャラクターを削除しました");
 }
+
+///==================
+//下部のバー表示
+//==================
+
+function toggleBottomBar(screen) {
+  const bar = document.getElementById("bottom-bar");
+  bar.classList.toggle("hidden", screen === "list");
+}
+
+
+
 
 ///====================
 //id導入時の仕様変更

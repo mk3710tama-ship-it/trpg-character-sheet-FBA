@@ -75,7 +75,7 @@
   固定値 5
 </label>
 
-<button type="button" onclick="initAllocationByChoice()">
+<button type="button" onclick="confirmAllocationByChoice()">
   初期ポイント決定
 </button>
 
@@ -84,7 +84,7 @@
 
 <h2>基本ステータス</h2>
 
-<button type="button" onclick="basic_rollAllStats()">🎲 一括ロール</button>
+<button type="button" onclick="confirmRollAllStats('basic')">🎲 一括ロール</button>
 
 
 <table class="status-table">
@@ -163,7 +163,7 @@
 
 <h2>追加ステータス</h2>
 
-<button type="button" onclick="add_rollAllStats()">🎲 一括ロール</button>
+<button type="button" onclick="confirmRollAllStats('additional')">🎲 一括ロール</button>
 
 <table class="status-table">
   <tr>
@@ -250,14 +250,28 @@
 </table>
 <ul id="item-list"></ul>
 
-
+<h2>スキル</h2>
 <select id="skill-select">
   <option value="">スキルを選択</option>
   <option value="power-attack">攻撃</option>
   <option value="quick-cast">防御</option>
 </select>
-
 <button type="button" onclick="addSkill()">取得</button>
+<br></br>
+<input
+  type="text"
+  id="skill-search"
+  placeholder="スキル名で検索"
+/>
+
+<ul id="skill-search-list" class="skill-search-list"></ul>
+
+<button type="button" onclick="addSkillFromSearch()">
+  取得
+</button>
+
+
+
 
 <h3>スキル一覧</h3>
 <ul id="skill-list" class="skill-list">
@@ -367,6 +381,17 @@
 
 <div id="list-area" style="display:none;">
   <h2>保存キャラクター一覧</h2>
+  <div class="character-table">
+  <div class="character-row header">
+    <div>キャラクター名</div>
+    <div>編集</div>
+    <div>閲覧</div>
+    <div>削除</div>
+  </div>
+
+  <div id="character-list"></div>
+</div>
+
   <ul id="character-list"></ul>
 </div>
 
