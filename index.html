@@ -32,7 +32,7 @@
   </select>
 </label>
 
-<br></br>
+<br>
 
 <label>
   メインジョブ：
@@ -46,7 +46,7 @@
   </select>
 </label>
 
-<br></br>
+<br>
 
 <label>
   　サブジョブ：
@@ -60,7 +60,7 @@
   </select>
 </label>
 
-<br></br>
+<br>
 レベル: <input type="number" id="level" value="1" min="1" max="99">
 
 <h3>割り振りポイント初期値</h3>
@@ -248,26 +248,39 @@
     <!-- JSで行を追加 -->
   </tbody>
 </table>
-<ul id="item-list"></ul>
+
 
 <h2>スキル</h2>
-<select id="skill-select">
-  <option value="">スキルを選択</option>
-  <option value="power-attack">攻撃</option>
-  <option value="quick-cast">防御</option>
-</select>
-<button type="button" onclick="addSkill()">取得</button>
-<br></br>
-<input
-  type="text"
-  id="skill-search"
-  placeholder="スキル名で検索"
-/>
+
+<input type="text" id="skill-search" placeholder="スキル名で検索"/>
+<div class="tag-search-area">
+  <select id="tag-select">
+    <option value="">タグを選択</option>
+  </select>
+  <button type="button" id="add-tag-btn">追加</button>
+  <div id="skill-acquire-note" class="note">
+タグ再タップで消去
+</div>
+</div>
+
+<div id="selected-tags"></div>
+
+<div class="tag-mode">
+  <label>
+    <input type="radio" name="tag-mode" value="and" checked>
+    AND
+  </label>
+  <label>
+    <input type="radio" name="tag-mode" value="or">
+    OR
+  </label>
+</div>
+
 
 <ul id="skill-search-list" class="skill-search-list"></ul>
 
-<button type="button" onclick="addSkillFromSearch()">
-  取得
+<button type="button" class="skill-acquire-btn" onclick="addSkillFromSearch()">
+ 選択スキルを取得
 </button>
 
 
@@ -277,6 +290,10 @@
 <ul id="skill-list" class="skill-list">
   <!-- JSで行を追加 -->
 </ul>
+
+<div id="skill-acquire-note" class="note">
+取得でステータスに変化はありません、効果は自分で補正欄に書き込んでください
+</div>
 
 
 
@@ -392,7 +409,6 @@
   <div id="character-list"></div>
 </div>
 
-  <ul id="character-list"></ul>
 </div>
 
 

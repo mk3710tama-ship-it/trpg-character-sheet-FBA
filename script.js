@@ -36,6 +36,133 @@ const subJobs ={
 };
 
 
+//以下スキル用の表示関数
+
+function effectTemplate(template, valueFn) {
+  return {
+    type: "template",
+    template,
+    valueFn
+  };
+}
+function defineSkill(
+  name,
+  tags,
+  [minLevel, maxLevel],
+  [acquire, perLevel],
+  effect
+) {
+  return {
+    id: name,
+    name,
+    tags,
+    minLevel,
+    maxLevel,
+    cost: { acquire, perLevel },
+    effect
+  };
+}
+function getEffectText(skill, level) {
+  if (!skill.effect) return "";
+
+  // テンプレート型
+  if (skill.effect.type === "template") {
+    const result = skill.effect.valueFn(level);
+
+    // valueFn が数値を返す場合
+    if (typeof result === "number") {
+      return skill.effect.template.replace("{value}", result);
+    }
+
+    // valueFn がオブジェクトを返す場合
+    let text = skill.effect.template;
+    for (const key in result) {
+      text = text.replace(`{${key}}`, result[key]);
+    }
+    return text;
+  }
+
+  // 旧形式（互換）
+  return skill.effect[level] ?? "";
+}
+
+
+
+
+
+
+const skillMaster = [
+//捕食者の爪  
+defineSkill(
+  // 名前・id
+  "捕食者の爪",
+  // 検索タグ
+  ["ワービースト", "攻撃"],
+  // レベル範囲 [min, max]
+  [1, 10],
+  // コスト [取得, レベル]
+  [2, 2],
+  // 効果（テンプレート式）
+  effectTemplate(
+    "近接ダメージ +{value}{suffix}",
+    level => ({
+      value: level,
+      suffix: level === 10 ? "(最大レベル)" : ""
+    })
+  )
+),
+
+//野生の勘
+defineSkill(
+  // 名前・id
+  "野生の勘",
+  // 検索タグ
+  ["ワービースト", "防御"],
+  // レベル範囲 [min, max]
+  [1, 10],
+  // コスト [取得, レベル]
+  [1, 1],
+  // 効果（テンプレート式）
+  effectTemplate(
+    "回避成功値 +{value}{suffix}",
+    level => ({
+      value: level,
+      suffix: level === 10 ? "(最大レベル)" : ""
+    })
+  )
+),
+
+//獣圧
+defineSkill(
+  // 名前・id
+  "獣圧",
+  // 検索タグ
+  ["ワービースト", "デバフ"],
+  // レベル範囲 [min, max]
+  [1, 5],
+  // コスト [取得, レベル]
+  [4, 4],
+  // 効果（テンプレート式）
+  effectTemplate(
+    "１つ前のターン中に自身が近接ダメージを与えた敵が、自身を攻撃範囲に含む攻撃をするとき、その攻撃のファンブル値を与えたダメージ分だけ下げる。ただし低下する値は{value}以上にならない{suffix}",
+    level => {
+    const map = {
+      1: 1,
+      2: 3,
+      3: 5,
+      4: 7,
+      5: 10
+    };
+    return {
+      value: map[level],
+      suffix: level === 5 ? "(最大レベル)" : ""
+    };
+  }
+    
+  )
+),
+
+];
 
 
 // =====================
@@ -403,43 +530,10 @@ function add_rollAllStats() {
 //スキル管理
 //=====================
 
-const skillMaster = [
-  {id: "power_attack",
-  name: "パワーアタック",
-  minLevel: 1,
-  maxLevel: 3,
-  cost: {
-  acquire: 3,   // Lv0 → Lv1
-  perLevel: 1   // Lv1 → Lv2 以降
-}
-,
-
-  effects: {
-    1: "ダメージ +2",
-    2: "ダメージ +4",
-    3: "ダメージ +7"
-  }},
-
-  {
-  id: "quick_cast",
-  name: "クイックキャスト",
-  minLevel: 1,
-  maxLevel: 3,
-  cost: {
-  acquire: 5,   // Lv0 → Lv1
-  perLevel: 2   // Lv1 → Lv2 以降
-},
-
-  effects: {
-    1: "詠唱時間 -1",
-    2: "詠唱時間 -2",
-    3: "詠唱時間 -3"
-  }
-}
-
-];
 
 let characterSkills = [];
+const nameInput = document.getElementById("skill-search");
+
 
 
 function renderSkillSelect() {
@@ -576,48 +670,58 @@ function removeSkill(skillId) {
 }
 
 function getSkillEffectText(skillData, master) {
-  if (!master.effects) return master.effect || "";
-
-  return master.effects[skillData.level]
-    ?? master.effects[master.maxLevel]
-    ?? "";
+  return getEffectText(master, skillData.level);
 }
+
+
 
 let selectedSkillId = null;
 
 const searchInput = document.getElementById("skill-search");
 const searchList = document.getElementById("skill-search-list");
 
-searchInput.addEventListener("input", () => {
-  const keyword = searchInput.value.trim().toLowerCase();
-  renderSkillSearchList(keyword);
-});
+nameInput.addEventListener("input", renderSkillSearchList);
 
-function renderSkillSearchList(keyword = "") {
+
+function renderSkillSearchList() {
   searchList.innerHTML = "";
   selectedSkillId = null;
 
+  const nameKeyword = nameInput.value.trim().toLowerCase();
+  const mode = getTagMode();
+
   skillMaster
-    .filter(skill =>
-      skill.name.toLowerCase().includes(keyword)
-    )
-    .forEach(skill => {
-      const li = document.createElement("li");
-      li.textContent = skill.name;
+    .filter(skill => {
 
-      li.onclick = () => {
-        selectedSkillId = skill.id;
+      // 名前検索
+      if (
+        nameKeyword &&
+        !skill.name.toLowerCase().includes(nameKeyword)
+      ) {
+        return false;
+      }
 
-        // 選択状態の見た目
-        [...searchList.children].forEach(el =>
-          el.classList.remove("selected")
-        );
-        li.classList.add("selected");
-      };
+      // タグ検索（option選択式）
+      if (selectedTags.length > 0) {
+        if (!skill.tags) return false;
 
-      searchList.appendChild(li);
-    });
+        if (mode === "and") {
+          return selectedTags.every(tag =>
+            skill.tags.includes(tag)
+          );
+        } else {
+          return selectedTags.some(tag =>
+            skill.tags.includes(tag)
+          );
+        }
+      }
+
+      return true;
+    })
+    .forEach(renderSkillRow);
 }
+
+
 
 function addSkillFromSearch() {
   if (!selectedSkillId) {
@@ -639,9 +743,91 @@ function addSkillFromSearch() {
   searchList.innerHTML = "";
   selectedSkillId = null;
 }
+const tagSelect = document.getElementById("tag-select");
 
 
 
+function initTagOptions() {
+  const tags = new Set();
+
+  skillMaster.forEach(skill => {
+    (skill.tags || []).forEach(tag => tags.add(tag));
+  });
+
+  tags.forEach(tag => {
+    const option = document.createElement("option");
+    option.value = tag;
+    option.textContent = tag;
+    tagSelect.appendChild(option);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  initTagOptions();
+});
+let selectedTags = [];
+
+document.getElementById("add-tag-btn")
+  .addEventListener("click", () => {
+
+    const tag = tagSelect.value;
+    if (!tag) return;
+    if (selectedTags.includes(tag)) return;
+
+    selectedTags.push(tag);
+    tagSelect.value = "";
+
+    renderSelectedTags();
+    renderSkillSearchList();
+  });
+
+  function renderSelectedTags() {
+  const area = document.getElementById("selected-tags");
+  area.innerHTML = "";
+
+  selectedTags.forEach(tag => {
+    const span = document.createElement("span");
+    span.textContent = tag;
+    span.className = "selected-tag";
+
+    span.onclick = () => {
+      selectedTags = selectedTags.filter(t => t !== tag);
+      renderSelectedTags();
+      renderSkillSearchList();
+    };
+
+    area.appendChild(span);
+  });
+}
+
+function getTagMode() {
+  return document.querySelector(
+    'input[name="tag-mode"]:checked'
+  ).value;
+}
+
+document.querySelectorAll('input[name="tag-mode"]')
+  .forEach(radio => {
+    radio.addEventListener("change", renderSkillSearchList);
+  });
+
+function renderSkillRow(skill) {
+  const li = document.createElement("li");
+  li.className = "skill-search-row";
+
+  li.textContent = `${skill.name}（${skill.tags?.join(" / ") || ""}）`;
+
+  li.onclick = () => {
+    document
+      .querySelectorAll(".skill-search-row")
+      .forEach(el => el.classList.remove("selected"));
+
+    li.classList.add("selected");
+    selectedSkillId = skill.id;
+  };
+
+  searchList.appendChild(li);
+}
 
 
 // =====================
@@ -1194,3 +1380,4 @@ updateAllocationBar();
 updateSkillPointBar();
 renderSkillSelect();
 renderSkillList();
+renderSkillSearchList();
