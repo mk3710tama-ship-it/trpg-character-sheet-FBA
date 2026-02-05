@@ -92,6 +92,7 @@ function getEffectText(skill, level) {
 
 
 const skillMaster = [
+//ワービースト
 //捕食者の爪  
 defineSkill(
   // 名前・id
@@ -256,7 +257,7 @@ function updateStatus() {
   const mp_true = mp_race + mp_daice + mp_quota+ mp_correction; 
   const sm_true = sm_race + sm_daice + sm_quota+ sm_correction;
   const luck_true = luck_daice + luck_quota + luck_correction;
-  const memory_true = memory_daice + memory_quota + memory_correction;
+  const memory_true = 2+memory_daice + memory_quota + memory_correction;
 
 
   document.getElementById("hp-race").textContent = hp_race;
@@ -310,7 +311,7 @@ function getRemainingPoints() {
 
 
 function setLevelBonus(level) {
-  allocation.levelBonus = level * 2; // 仮ルール
+  allocation.levelBonus = Math.floor(level/10); // 仮ルール
   updateAllocationBar();
 }
 
@@ -933,6 +934,7 @@ function showScreen(screen) {
   if (screen === "view") {
     updateView();
     renderViewItemList();
+    renderViewSkillList();
   }
 
   if (screen === "list") {
@@ -992,28 +994,74 @@ function updateView() {
 }
 
 function renderViewItemList() {
-  const tbody = document.getElementById("view-item-list");
-  tbody.innerHTML = "";
+  const container = document.getElementById("view-item-list");
+  container.innerHTML = "";
 
-  currentItems.forEach(item => {
-    const tr = document.createElement("tr");
+  currentItems.forEach((item, index) => {
+    const row = document.createElement("div");
+    row.className = "view-item-row";
 
-    const nameTd = document.createElement("td");
-    nameTd.textContent = item.name;
-    tr.appendChild(nameTd);
+    const main = document.createElement("div");
+    main.className = "view-item-main";
+    main.textContent = `${item.name}　×${item.quantity}`;
 
-    const qtyTd = document.createElement("td");
-    qtyTd.textContent = item.quantity;
-    tr.appendChild(qtyTd);
+    row.appendChild(main);
 
-    const noteTd = document.createElement("td");
-    noteTd.textContent = item.note || "";
-    tr.appendChild(noteTd);
+    const note = document.createElement("div");
+note.className = "view-item-note";
 
-    tbody.appendChild(tr);
+if (item.note && item.note.trim() !== "") {
+  note.textContent = item.note;
+} else {
+  note.textContent = "効果なし";
+  note.classList.add("no-effect");
+}
+
+row.appendChild(note);
+
+
+    
+
+    container.appendChild(row);
+
+    // 最後以外に区切り線
+    if (index < currentItems.length - 1) {
+      const hr = document.createElement("div");
+      hr.className = "view-item-divider";
+      container.appendChild(hr);
+    }
   });
 }
 
+function renderViewSkillList() {
+  const area = document.getElementById("view-skill-list");
+  if (!area) return;
+
+  area.innerHTML = "";
+
+  characterSkills.forEach(skillData => {
+    const master = skillMaster.find(s => s.id === skillData.id);
+    if (!master) return;
+
+    const div = document.createElement("div");
+    div.className = "view-skill-item";
+
+    const name = document.createElement("div");
+    name.className = "view-skill-name";
+    name.textContent = master.name;
+
+    const level = document.createElement("div");
+    level.className = "view-skill-level";
+    level.textContent = `Lv.${skillData.level}`;
+
+    const effect = document.createElement("div");
+    effect.className = "view-skill-effect";
+    effect.textContent = getSkillEffectText(skillData, master);
+
+    div.append(name, level, effect);
+    area.appendChild(div);
+  });
+}
 
 
 
@@ -1183,16 +1231,6 @@ characterSkills = character.skills || [];
 recalcSkillPointUsed();
 renderSkillList();
 
-
-
-
-
-
-
-
-
-
-
   updateStatus();
   updateView();
   renderItemList();
@@ -1201,6 +1239,7 @@ renderSkillList();
 
 if (currentScreen === "view") {
   renderViewItemList();
+  renderViewSkillList();
 }
   
 
@@ -1209,6 +1248,8 @@ if (currentScreen === "view") {
 // =====================
 // 一覧描画
 // =====================
+
+
 
 function renderCharacterList() {
   const list = document.getElementById("character-list");
@@ -1242,7 +1283,7 @@ function renderCharacterList() {
     deleteBtn.className = "delete";
     deleteBtn.onclick = () => {
       if (!confirm("このキャラクターを削除しますか？")) return;
-      deleteCharacter(character.id);
+      deleteCharacter_list(character.id);
       renderCharacterList();
     };
 
@@ -1320,6 +1361,40 @@ function deleteCharacter() {
   saveCharacters(filtered);
 
   currentCharacterId = null;
+
+  document.getElementById("charName").value = "";
+  renderCharacterList();
+
+  alert("キャラクターを削除しました");
+}
+
+function deleteCharacter_list(CharacterId) {
+  if (!CharacterId) {
+    alert("削除するキャラを選択してください");
+    return;
+  }
+
+  const characters = getCharacters();
+  const target = characters.find(c => c.id === CharacterId);
+
+  if (!target) {
+    alert("削除対象のキャラが見つかりません");
+    return;
+  }
+
+  const message =
+    `以下のキャラクターを削除します。\n\n` +
+    `キャラ名：${target.name}\n` +
+    `種族：${target.specie}\n` +
+    `メイン職：${target.meinJob}\n\n` +
+    `この操作は取り消せません。本当に削除しますか？`;
+
+  if (!confirm(message)) return;
+
+  const filtered = characters.filter(c => c.id !== CharacterId);
+  saveCharacters(filtered);
+
+  CharacterId = null;
 
   document.getElementById("charName").value = "";
   renderCharacterList();

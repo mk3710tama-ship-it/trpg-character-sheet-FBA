@@ -278,9 +278,49 @@ h1 {
 
 
 
+/*=================*/
+/* View item Styles*/
+/*=================*/
+
+/* スキル一覧と同じ役割 */
+.view-block {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+/* アイテム行 */
+.view-item-row {
+  padding: 6px 2px;
+}
+
+/* 名前＋個数 */
+.view-item-main {
+  font-weight: 500;
+}
+
+/* 備考 */
+.view-item-note {
+  margin-top: 4px;
+  font-size: 0.9em;
+  color: #555;
+}
+
+/* 区切り線 */
+.view-item-divider {
+  margin: 8px 0;
+  border-top: 1px solid #ddd;
+}
+
+.view-item-row:hover {
+  background-color: #f7f7f7;
+}
+
+
 
 /*===================*/
-/* View Mode Styles  */
+/* View skill Styles */
 /*===================*/
 
 .view-mode input,
@@ -288,6 +328,55 @@ h1 {
   display: none;
   pointer-events: none;
 }
+
+.view-skill-item {
+  padding: 8px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.view-skill-name {
+  font-weight: bold;
+}
+
+.view-skill-level {
+  font-size: 12px;
+  color: #555;
+}
+
+.view-skill-effect {
+  margin-top: 2px;
+  font-size: 13px;
+}
+
+.view-skill-item {
+  padding: 8px 0;
+  border-bottom: 1px solid #ccc; /* 区切り線 */
+}
+
+.view-skill-item:last-child {
+  border-bottom: none;
+}
+
+.view-skill-name,
+.view-skill-level {
+  display: inline-block;
+}
+
+.view-skill-name {
+  font-weight: bold;
+  margin-right: 12px;
+}
+
+.view-skill-level {
+  color: #555;
+  font-size: 0.9em;
+}
+
+.view-skill-item:hover {
+  background-color: #f7f7f7;
+}
+
+
 
 /*==========================*/
 /* character select Styles  */
