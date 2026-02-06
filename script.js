@@ -937,6 +937,92 @@ document.getElementById("add-item").addEventListener("click", () => {
 });
 
 
+//=====================
+//装備・武器管理
+//=====================
+
+let currentWeapons=[]
+
+function addWeapon() {
+  const name = document.getElementById("weapon-name").value.trim();
+  if (!name) {
+    alert("武器名を入力してください");
+    return;
+  }
+
+  const weapon = {
+    name,
+    damage: document.getElementById("weapon-damage").value.trim(),
+    durability: document.getElementById("weapon-durability").value.trim(),
+    note: document.getElementById("weapon-note").value.trim()
+  };
+
+  currentWeapons.push(weapon);
+  renderWeaponList();
+
+  // 入力欄クリア
+  document.getElementById("weapon-name").value = "";
+  document.getElementById("weapon-damage").value = "";
+  document.getElementById("weapon-durability").value = "";
+  document.getElementById("weapon-note").value = "";
+}
+
+function renderWeaponList() {
+  const container = document.getElementById("weapon-list");
+  container.innerHTML = "";
+
+  currentWeapons.forEach((weapon, index) => {
+    const card = document.createElement("div");
+    card.className = "edit-weapon-card";
+
+    /* ===== 上段 ===== */
+    const header = document.createElement("div");
+    header.className = "edit-weapon-header";
+
+    const name = document.createElement("div");
+    name.className = "edit-weapon-name";
+    name.textContent = weapon.name;
+
+    const damage = document.createElement("div");
+    damage.className = "edit-weapon-value";
+    damage.textContent = `ダメ：${weapon.damage || "—"}`;
+
+    const durability = document.createElement("div");
+    durability.className = "edit-weapon-value";
+    durability.textContent = `耐久：${weapon.durability || "—"}`;
+
+    header.append(name, damage, durability);
+
+    /* ===== 下段 ===== */
+    const footer = document.createElement("div");
+    footer.className = "edit-weapon-footer";
+
+    const note = document.createElement("div");
+    note.className = "edit-weapon-note";
+    note.textContent =
+      weapon.note && weapon.note.trim() !== ""
+        ? weapon.note
+        : "詳細なし";
+
+    const del = document.createElement("button");
+    del.className = "weapon-delete-btn";
+    del.textContent = "削除";
+    del.onclick = () => removeWeapon(index);
+
+    footer.append(note, del);
+
+    card.append(header, footer);
+    container.appendChild(card);
+  });
+}
+
+
+function removeWeapon(index) {
+  if (!confirm("この武器を削除しますか？")) return;
+  currentWeapons.splice(index, 1);
+  renderWeaponList();
+}
+
 
 
 
@@ -965,6 +1051,7 @@ function showScreen(screen) {
     updateView();
     renderViewItemList();
     renderViewSkillList();
+    renderViewWeaponList();
   }
 
   if (screen === "list") {
@@ -1093,7 +1180,47 @@ function renderViewSkillList() {
   });
 }
 
+function renderViewWeaponList() {
+  const container = document.getElementById("view-weapon-card");
+  if (!container) return;
 
+  container.innerHTML = "";
+
+  if (!currentWeapons || currentWeapons.length === 0) {
+    container.textContent = "武器なし";
+    return;
+  }
+
+  currentWeapons.forEach(weapon => {
+    const card = document.createElement("div");
+    card.className = "view-weapon-card";
+
+    /* 武器名 */
+    const name = document.createElement("div");
+    name.className = "view-weapon-name";
+    name.textContent = weapon.name;
+
+    /* ダメージ + 耐久値（横並び） */
+    const statsRow = document.createElement("div");
+    statsRow.className = "view-weapon-stats";
+
+    const damage = document.createElement("div");
+    damage.textContent = `ダメージ：${weapon.damage || "―"}`;
+
+    const durability = document.createElement("div");
+    durability.textContent = `耐久値：${weapon.durability || "―"}`;
+
+    statsRow.append(damage, durability);
+
+    /* 備考 */
+    const note = document.createElement("div");
+    note.className = "view-weapon-note";
+    note.textContent = `備考：${weapon.note?.trim() || "効果なし"}`;
+
+    card.append(name, statsRow, note);
+    container.appendChild(card);
+  });
+}
 
 
 
@@ -1169,8 +1296,8 @@ function saveCharacter() {
     items: currentItems,
     allocation: allocation,
     skillPoints: skillPoints,
-    skills: characterSkills
-
+    skills: characterSkills,
+    weapons: currentWeapons.map(weapon =>({...weapon}))
 
   };
 
@@ -1244,6 +1371,7 @@ function loadCharacterById(id) {
   document.getElementById("sub-job").value = character.subJob;
 
   currentItems = (character.items || []).map(item => ({ ...item }));
+  currentWeapons=(character.weapons ||[]).map(weapon =>({...weapon}));
   
   allocation = character.allocation || {
   base: 0,
@@ -1264,6 +1392,7 @@ renderSkillList();
   updateStatus();
   updateView();
   renderItemList();
+  renderWeaponList();
   updateAllocationBar();
   updateSkillPointBar();
 

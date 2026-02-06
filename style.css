@@ -199,6 +199,48 @@ h1 {
   gap: 8px;
 }
 
+/*==============*/
+/* wepons style */
+/*==============*/
+
+
+.edit-weapon-card {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+
+.edit-weapon-header {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.edit-weapon-name {
+  font-weight: 600;
+}
+
+.edit-weapon-value {
+  white-space: nowrap;
+  font-size: 0.95em;
+}
+
+.edit-weapon-footer {
+  margin-top: 6px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.edit-weapon-note {
+  font-size: 0.9em;
+  color: #555;
+}
+
+
 
 /*=====================*/
 /* skill table Styles  */
@@ -421,6 +463,51 @@ h1 {
 
 .view-skill-item:hover {
   background-color: #f7f7f7;
+}
+
+/*===================*/
+/* view weapon style */
+/*===================*/
+
+.view-weapon-card {
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  background-color: #fff;
+}
+
+
+.view-weapon-block {
+  padding: 6px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.view-weapon-block:last-child {
+  border-bottom: none;
+}
+
+.view-weapon-name {
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+
+.view-weapon-row {
+  font-size: 0.9em;
+  margin-left: 0.5em;
+}
+
+.view-weapon-note {
+  font-size: 0.85em;
+  margin-left: 0.5em;
+  color: #555;
+}
+
+.view-weapon-stats {
+  display: flex;
+  gap: 12px;
+  font-size: 0.9em;
+  margin: 4px 0;
 }
 
 

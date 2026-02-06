@@ -220,9 +220,19 @@
     <td><span id="memory-true">0</span></td>
   </tr>
 
-
-
 </table>
+
+<h2>装備</h2>
+
+<input type="text" id="weapon-name" placeholder="武器名">
+<input type="text" id="weapon-damage" placeholder="ダメージ">
+<input type="text" id="weapon-durability" placeholder="耐久値">
+<input type="text" id="weapon-note" placeholder="備考">
+<button type="button" class="add-weapon" onclick="addWeapon()">追加</button>
+
+<h3>武器一覧</h3>
+<div id="weapon-list" class="edit-weapon-card-list"></div>
+
 
 <!-- 所持品欄-->
 <h2>所持品</h2>
@@ -367,6 +377,9 @@
         <th></th>
       </tr>
     </table>
+
+<h2>武器</h2>
+<div id="view-weapon-card" class="view-card"></div>
 
   
 <h2>所持品</h2>
