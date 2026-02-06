@@ -124,29 +124,81 @@ h1 {
 /*===================*/
 /* item table Styles */
 /*===================*/
-.item-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 8px;
+.edit-block {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 12px;
 }
 
+.edit-item-note {
+  margin-top: 4px;
+  font-size: 0.9em;
+  color: #555;
+}
 
-.item-table th,
-.item-table td {
-  border: 1px solid #ccc;
-  padding: 4px 6px;
-  font-size: 14px;
+.edit-item-row {
+  padding: 8px 0;
+}
+
+.edit-item-name {
+  font-weight: 600;
+}
+
+.edit-item-qty {
+  min-width: 2em;
   text-align: center;
 }
 
-.item-table input[type="number"] {
-  width: 60px;
+.item-btn {
+  padding: 2px 6px;
 }
 
-.item-table button {
-  padding: 2px 6px;
-  font-size: 12px;
+.item-delete-btn {
+  margin-left: 8px;
 }
+
+.edit-item-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.edit-item-card {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+
+.edit-item-header {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  align-items: center;
+  gap: 6px;
+}
+
+.edit-item-note {
+  margin-top: 6px;
+  font-size: 0.9em;
+  color: #555;
+}
+
+.edit-item-header {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  align-items: center;
+  gap: 6px;
+}
+
+.edit-item-footer {
+  margin-top: 6px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 8px;
+}
+
 
 /*=====================*/
 /* skill table Styles  */
@@ -329,11 +381,6 @@ h1 {
   pointer-events: none;
 }
 
-.view-skill-item {
-  padding: 8px 0;
-  border-bottom: 1px solid #ddd;
-}
-
 .view-skill-name {
   font-weight: bold;
 }
@@ -422,14 +469,6 @@ h1 {
 /*===================*/
 /* Bottom Bar Styles */
 /*===================*/
-
-#toggleViewBtn {
-  position: sticky;
-  top: 0;
-  width: 100%;
-  padding: 10px;
-  font-size: 18px;
-}
 
 #bottom-bar {
   position: fixed;

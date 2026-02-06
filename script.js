@@ -838,51 +838,81 @@ let currentItems = [];
 
 
 function renderItemList() {
-  const tbody = document.getElementById("item-list");
-  tbody.innerHTML = "";
+  const container = document.getElementById("item-list");
+  container.innerHTML = "";
 
   currentItems.forEach((item, index) => {
-    const tr = document.createElement("tr");
+    const card = document.createElement("div");
+    card.className = "edit-item-card";
 
-    // アイテム名
-    const nameTd = document.createElement("td");
-    nameTd.textContent = item.name;
-    tr.appendChild(nameTd);
+    /* ===== 上段 ===== */
+    const header = document.createElement("div");
+    header.className = "edit-item-header";
 
-    // 個数（編集可）
-    const qtyTd = document.createElement("td");
-    const qtyInput = document.createElement("input");
-    qtyInput.type = "number";
-    qtyInput.value = item.quantity;
-    qtyInput.min = 0;
+    const name = document.createElement("div");
+    name.className = "edit-item-name";
+    name.textContent = item.name;
 
-    qtyInput.onchange = () => {
-      item.quantity = Number(qtyInput.value) || 0;
-    };
+    const down = document.createElement("button");
+    down.className = "item-btn";
+    down.textContent = "−";
+    down.onclick = () => changeItemQuantity(index, -1);
 
-    qtyTd.appendChild(qtyInput);
-    tr.appendChild(qtyTd);
+    const qty = document.createElement("div");
+    qty.className = "edit-item-qty";
+    qty.textContent = item.quantity;
 
-    // 備考
-    const noteTd = document.createElement("td");
-    noteTd.textContent = item.note || "";
-    tr.appendChild(noteTd);
+    const up = document.createElement("button");
+    up.className = "item-btn";
+    up.textContent = "＋";
+    up.onclick = () => changeItemQuantity(index, 1);
 
-    // 削除
-    const delTd = document.createElement("td");
-    const delBtn = document.createElement("button");
-    delBtn.textContent = "×";
-    delBtn.onclick = () => {
-      currentItems.splice(index, 1);
-      renderItemList();
-    };
+    header.append(name, down, qty, up);
 
-    delTd.appendChild(delBtn);
-    tr.appendChild(delTd);
+    /* ===== 下段（備考＋削除） ===== */
+const footer = document.createElement("div");
+footer.className = "edit-item-footer";
 
-    tbody.appendChild(tr);
+const note = document.createElement("div");
+note.className = "edit-item-note";
+note.textContent =
+  item.note && item.note.trim() !== ""
+    ? item.note
+    : "効果なし";
+
+const del = document.createElement("button");
+del.className = "item-delete-btn";
+del.textContent = "削除";
+del.onclick = () => removeItem(index);
+
+footer.append(note, del);
+card.append(header, footer);
+
+    container.appendChild(card);
   });
 }
+
+
+function changeItemQuantity(index, delta) {
+  const item = currentItems[index];
+  item.quantity += delta;
+
+  if (item.quantity < 1) {
+    item.quantity = 1;
+  }
+
+  renderItemList();
+}
+
+function removeItem(index) {
+  if (!confirm("このアイテムを削除しますか？")) {
+    return;
+  }
+
+  currentItems.splice(index, 1);
+  renderItemList();
+}
+
 
 
 document.getElementById("add-item").addEventListener("click", () => {
