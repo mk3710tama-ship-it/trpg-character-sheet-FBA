@@ -50,7 +50,8 @@ function defineSkill(
   tags,
   [minLevel, maxLevel],
   [acquire, perLevel],
-  effect
+  effect,
+  evolve = ""   // ← 文字列（未記入OK）
 ) {
   return {
     id: name,
@@ -59,7 +60,8 @@ function defineSkill(
     minLevel,
     maxLevel,
     cost: { acquire, perLevel },
-    effect
+    effect,
+    evolve
   };
 }
 function getEffectText(skill, level) {
@@ -111,8 +113,29 @@ defineSkill(
       suffix: level === 10 ? "(最大レベル)" : ""
     })
   )
+  //進化元(なくてもok)
 ),
-
+//狩猟本能
+defineSkill(
+  // 名前・id
+  "狩猟本能",
+  // 検索タグ
+  ["ワービースト", "攻撃"],
+  // レベル範囲 [min, max]
+  [1,5],
+  // コスト [取得, レベル]
+  [23, 3],
+  // 効果（テンプレート式）
+  effectTemplate(
+    "攻撃ダメージ +{value}{suffix}",
+    level => ({
+      value: level+5,
+      suffix: level === 5 ? "(最大レベル)" : ""
+    })
+  ),
+  //進化元(なくてもok)
+  "捕食者の爪"
+),
 //野生の勘
 defineSkill(
   // 名前・id
@@ -131,8 +154,64 @@ defineSkill(
       suffix: level === 10 ? "(最大レベル)" : ""
     })
   )
+  //進化元(なくてもok)
 ),
-
+//敏感な嗅覚
+defineSkill(
+  // 名前・id
+  "敏感な嗅覚",
+  // 検索タグ
+  ["ワービースト", "補助"],
+  // レベル範囲 [min, max]
+  [1,1],
+  // コスト [取得, レベル]
+  [25, 1],
+  // 効果（テンプレート式）
+  effectTemplate(
+    "隠されている物が隣接マスに存在するとき、位置がわかる{suffix}",
+    level => ({
+      suffix: level === 1 ? "(最大レベル)" : ""
+    })
+  ),
+  //進化元(なくてもok)
+  "野生の勘"
+),
+//敏感な嗅覚
+defineSkill(
+  // 名前・id
+  "敏感な嗅覚",
+  // 検索タグ
+  ["ワービースト", "防御"],
+  // レベル範囲 [min, max]
+  [1,4],
+  // コスト [取得, レベル]
+  [13, 3],
+  // 効果（テンプレート式）
+  effectTemplate(
+    "回避成功値+{value}{add}{suffix}",
+    level => {
+      const valuemap ={
+        1:10,
+        2:10,
+        3:11,
+        4:12
+      }
+      const addmap ={
+        1:"",
+        2:"",
+        3:",AGI+1",
+        4:",AGI+2"
+      }
+      return{
+        value:valyemap[level],
+        add:addmap[level],
+        suffix: level === 4 ? "(最大レベル)" : ""
+      }
+    }
+  ),
+  //進化元(なくてもok)
+  "野生の勘"
+),
 //獣圧
 defineSkill(
   // 名前・id
@@ -159,9 +238,68 @@ defineSkill(
       suffix: level === 5 ? "(最大レベル)" : ""
     };
   }
-    
   )
+  //進化元(なくてもok)
 ),
+//獣に睨まれた蛙
+defineSkill(
+  // 名前・id
+  "獣に睨まれた蛙",
+  // 検索タグ
+  ["ワービースト", "デバフ"],
+  // レベル範囲 [min, max]
+  [1, 4],
+  // コスト [取得, レベル]
+  [30, 10],
+  // 効果（テンプレート式）
+  effectTemplate(
+    "１つ前のターン中に自身が近接ダメージを与えた敵が、攻撃をするとき、その攻撃のファンブル値を与えたダメージ分だけ下げる。ただし低下する値は{value}以上にならない。また「獣圧」と重複した場合、効果量は加算される。{suffix}",
+    level => {
+    const map = {
+      1: 7,
+      2: 10,
+      3: 13,
+      4:15
+    };
+    return {
+      value: map[level],
+      suffix: level === 4 ? "(最大レベル)" : ""
+    };
+  }
+  ),
+  //進化元(なくてもok)
+  "獣圧"
+),
+//獣牙の心傷
+defineSkill(
+  // 名前・id
+  "獣牙の心傷",
+  // 検索タグ
+  ["ワービースト", "デバフ"],
+  // レベル範囲 [min, max]
+  [1, 3],
+  // コスト [取得, レベル]
+  [65, 25],
+  // 効果（テンプレート式）
+  effectTemplate(
+    "{value}ターン以内に自身が近接ダメージを与えた敵が、攻撃をするとき、その攻撃のファンブル値を{value2}だけ下げる。「獣圧」「獣に睨まれた兎」と重複するとき、大きい値を適用{suffix}",
+    level => {
+    const map = {
+      1: 2,
+      2: 3,
+      3: 3
+    };
+    return {
+      value: map[level],
+      value2:level*5,
+      suffix: level === 5 ? "(最大レベル)" : ""
+    };
+  }
+  ),
+  //進化元(なくてもok)
+  "獣に睨まれた兎"
+),
+
 
 ];
 
@@ -309,7 +447,6 @@ function getRemainingPoints() {
   return getTotalPoints() - allocation.used;
 }
 
-
 function setLevelBonus(level) {
   allocation.levelBonus = Math.floor(level/10); // 仮ルール
   updateAllocationBar();
@@ -321,7 +458,6 @@ function useAllocationPoints(quotas) {
 
   updateAllocationBar();
 }
-
 
 function updateAllocationBar() {
   const el = document.getElementById("point-summary");
@@ -353,7 +489,6 @@ function confirmAllocationByChoice() {
 
   initAllocationByChoice();
 }
-
 
 function initAllocationByChoice() {
   const selected = document.querySelector(
@@ -471,8 +606,6 @@ const raceDiceMap = {
 
 };
 
-
-
 function rollStat(inputId, rollFunc) {
   const input = document.getElementById(inputId);
   if (!input) return;
@@ -531,10 +664,45 @@ function add_rollAllStats() {
 //スキル管理
 //=====================
 
-
 let characterSkills = [];
 const nameInput = document.getElementById("skill-search");
 
+let selectedSkillId = null;
+
+const searchInput = document.getElementById("skill-search");
+const searchList = document.getElementById("skill-search-list");
+
+nameInput.addEventListener("input", renderSkillSearchList);
+
+const tagSelect = document.getElementById("tag-select");
+
+document.addEventListener("DOMContentLoaded", () => {
+  initTagOptions();
+});
+let selectedTags = [];
+
+document.getElementById("add-tag-btn")
+  .addEventListener("click", () => {
+
+    const tag = tagSelect.value;
+    if (!tag) return;
+    if (selectedTags.includes(tag)) return;
+
+    selectedTags.push(tag);
+    tagSelect.value = "";
+
+    renderSelectedTags();
+    renderSkillSearchList();
+  });
+
+  document
+  .getElementById("search-evolve")
+  .addEventListener("change", renderSkillSearchList);
+
+  document.querySelectorAll('input[name="tag-mode"]')
+  .forEach(radio => {
+    radio.addEventListener("change", renderSkillSearchList);
+  });
 
 
 function renderSkillSelect() {
@@ -617,8 +785,6 @@ function renderSkillList() {
   });
 }
 
-
-
 function changeSkillLevel(skillId, diff) {
   const skill = characterSkills.find(s => s.id === skillId);
   const master = skillMaster.find(s => s.id === skillId);
@@ -654,7 +820,6 @@ function recalcSkillPointUsed() {
   updateSkillPointBar();
 }
 
-
 function removeSkill(skillId) {
   const skill = characterSkills.find(s => s.id === skillId);
   const master = skillMaster.find(s => s.id === skillId);
@@ -674,33 +839,35 @@ function getSkillEffectText(skillData, master) {
   return getEffectText(master, skillData.level);
 }
 
-
-
-let selectedSkillId = null;
-
-const searchInput = document.getElementById("skill-search");
-const searchList = document.getElementById("skill-search-list");
-
-nameInput.addEventListener("input", renderSkillSearchList);
-
-
 function renderSkillSearchList() {
   searchList.innerHTML = "";
   selectedSkillId = null;
 
   const nameKeyword = nameInput.value.trim().toLowerCase();
   const mode = getTagMode();
+  const includeEvolve =
+  document.getElementById("search-evolve")?.checked;
+
 
   skillMaster
     .filter(skill => {
 
       // 名前検索
-      if (
-        nameKeyword &&
-        !skill.name.toLowerCase().includes(nameKeyword)
-      ) {
-        return false;
-      }
+      // 名前＋進化元検索
+if (nameKeyword) {
+  const nameMatch =
+    skill.name.toLowerCase().includes(nameKeyword);
+
+  const evolveMatch =
+    includeEvolve &&
+    skill.evolve &&
+    skill.evolve.toLowerCase().includes(nameKeyword);
+
+  if (!nameMatch && !evolveMatch) {
+    return false;
+  }
+}
+
 
       // タグ検索（option選択式）
       if (selectedTags.length > 0) {
@@ -722,8 +889,6 @@ function renderSkillSearchList() {
     .forEach(renderSkillRow);
 }
 
-
-
 function addSkillFromSearch() {
   if (!selectedSkillId) {
     alert("スキルを選択してください");
@@ -744,9 +909,6 @@ function addSkillFromSearch() {
   searchList.innerHTML = "";
   selectedSkillId = null;
 }
-const tagSelect = document.getElementById("tag-select");
-
-
 
 function initTagOptions() {
   const tags = new Set();
@@ -763,26 +925,7 @@ function initTagOptions() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  initTagOptions();
-});
-let selectedTags = [];
-
-document.getElementById("add-tag-btn")
-  .addEventListener("click", () => {
-
-    const tag = tagSelect.value;
-    if (!tag) return;
-    if (selectedTags.includes(tag)) return;
-
-    selectedTags.push(tag);
-    tagSelect.value = "";
-
-    renderSelectedTags();
-    renderSkillSearchList();
-  });
-
-  function renderSelectedTags() {
+function renderSelectedTags() {
   const area = document.getElementById("selected-tags");
   area.innerHTML = "";
 
@@ -807,16 +950,18 @@ function getTagMode() {
   ).value;
 }
 
-document.querySelectorAll('input[name="tag-mode"]')
-  .forEach(radio => {
-    radio.addEventListener("change", renderSkillSearchList);
-  });
-
 function renderSkillRow(skill) {
   const li = document.createElement("li");
   li.className = "skill-search-row";
 
-  li.textContent = `${skill.name}（${skill.tags?.join(" / ") || ""}）`;
+  const tagText = skill.tags?.join(" / ") || "";
+
+  // 進化条件（あれば表示）
+  const evolveText = skill.evolve
+    ? ` [条件：${skill.evolve}]`
+    : "";
+
+  li.textContent = `${skill.name}（${tagText}）${evolveText}`;
 
   li.onclick = () => {
     document
@@ -829,6 +974,7 @@ function renderSkillRow(skill) {
 
   searchList.appendChild(li);
 }
+
 
 
 // =====================
