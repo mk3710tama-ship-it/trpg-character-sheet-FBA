@@ -1,3 +1,4 @@
+
 // =====================
 // グローバル変数
 // =====================
@@ -38,11 +39,49 @@ const subJobs ={
 
 //以下スキル用の表示関数
 
-function effectTemplate(template, valueFn) {
-  return {
-    type: "template",
-    template,
-    valueFn
+function effectTemplate(text, valueFunc) {
+  return level => {
+    const values = valueFunc(level) ?? {};
+    const fragment = document.createDocumentFragment();
+
+    const parts = text.split(/(\{[^}]+\})/g);
+
+    parts.forEach(part => {
+      const match = part.match(/^\{(.+)\}$/);
+
+      // プレースホルダでない通常テキスト
+      if (!match) {
+        fragment.appendChild(
+          document.createTextNode(part)
+        );
+        return;
+      }
+
+      const key = match[1];
+
+      // values に無いキーは何も出さない（安全）
+      if (!(key in values)) {
+        return;
+      }
+
+      const value = values[key];
+
+      // suffix は通常文字
+      if (key === "suffix") {
+        fragment.appendChild(
+          document.createTextNode(String(value))
+        );
+        return;
+      }
+
+      // それ以外は強調
+      const span = document.createElement("span");
+      span.className = "skill-effect-value";
+      span.textContent = String(value);
+      fragment.appendChild(span);
+    });
+
+    return fragment;
   };
 }
 function defineSkill(
@@ -176,10 +215,10 @@ defineSkill(
   //進化元(なくてもok)
   "野生の勘"
 ),
-//敏感な嗅覚
+//危機察知
 defineSkill(
   // 名前・id
-  "敏感な嗅覚",
+  "危機察知",
   // 検索タグ
   ["ワービースト", "防御"],
   // レベル範囲 [min, max]
@@ -188,7 +227,7 @@ defineSkill(
   [13, 3],
   // 効果（テンプレート式）
   effectTemplate(
-    "回避成功値+{value}{add}{suffix}",
+    "回避成功値+{value}{value2}{suffix}",
     level => {
       const valuemap ={
         1:10,
@@ -203,8 +242,8 @@ defineSkill(
         4:",AGI+2"
       }
       return{
-        value:valyemap[level],
-        add:addmap[level],
+        value: valuemap[level],
+        value2:addmap[level],
         suffix: level === 4 ? "(最大レベル)" : ""
       }
     }
@@ -292,13 +331,66 @@ defineSkill(
     return {
       value: map[level],
       value2:level*5,
-      suffix: level === 5 ? "(最大レベル)" : ""
+      suffix: level === 3 ? "(最大レベル)" : ""
     };
   }
   ),
   //進化元(なくてもok)
   "獣に睨まれた兎"
 ),
+
+//エルフ
+//長寿の知恵
+defineSkill(
+  // 名前・id
+  "長寿の知恵",
+  // 検索タグ
+  ["エルフ", "補助"],
+  // レベル範囲 [min, max]
+  [1, 10],
+  // コスト [取得, レベル]
+  [2, 2],
+  // 効果（テンプレート式）
+  effectTemplate(
+    "IDA +{value}{suffix}",
+    level => ({
+      value: level,
+      suffix: level === 10 ? "、魔法または戦技を一つ選択し、それのレベルを+1d3してもよい。(最大レベル)" : ""
+    })
+  )
+  //進化元(なくてもok)
+),
+//世界樹の加護
+defineSkill(
+  // 名前・id
+  "世界樹の加護",
+  // 検索タグ
+  ["エルフ", "補助"],
+  // レベル範囲 [min, max]
+  [1, 7],
+  // コスト [取得, レベル]
+  [3, 3],
+  // 効果（テンプレート式）
+  effectTemplate(
+    "[k]魔法を獲得していなければ火、水、風、土、光、闇のいずれかの属性の初級魔法をランダムに{value2}つ獲得し、その魔法名の後ろに[K]の印をつける。この効果で獲得した魔法のスタミナ消費量を{value}減少させる。{suffix}",
+    level => {
+      const map = {
+      1:1,
+      2:1,
+      3:2,
+      4:2,
+      5:3,
+      6:3,
+      7:3,};
+      return {
+      value: map[level],
+      value2: Math.ceil(level/7),
+      suffix: level === 7 ? "(最大レベル)" : ""
+    };
+  }),
+  //進化元(なくてもok)
+),
+//ホビット
 
 
 ];
@@ -707,6 +799,7 @@ document.getElementById("add-tag-btn")
 
 function renderSkillSelect() {
   const select = document.getElementById("skill-select");
+  if (!select) return; // ← これ重要
   select.innerHTML = '<option value="">スキルを選択</option>';
 
   skillMaster.forEach(skill => {
@@ -771,7 +864,12 @@ function renderSkillList() {
 
     const effect = document.createElement("div");
     effect.className = "skill-effect";
-    effect.textContent = getSkillEffectText(skillData, master);
+    effect.textContent = "";
+effect.appendChild(
+    master.effect(skillData.level)
+
+);
+
 
     const del = document.createElement("button");
     del.className = "skill-delete-btn";
@@ -1319,7 +1417,12 @@ function renderViewSkillList() {
 
     const effect = document.createElement("div");
     effect.className = "view-skill-effect";
-    effect.textContent = getSkillEffectText(skillData, master);
+    effect.textContent = ""; // 初期化
+    effect.appendChild(
+    master.effect(skillData.level)
+);
+
+
 
     div.append(name, level, effect);
     area.appendChild(div);
