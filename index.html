@@ -62,9 +62,13 @@
 
 <br>
 レベル: <input type="number" id="level" value="1" min="1" max="99">
+役職レベル
+メインジョブ: <input type="number" id="mein-job-level" value="1" min="1" max="99">
+サブジョブ: <input type="number" id="sub-job-level" value="0" min="0" max="99">
 
-<h3>割り振りポイント初期値</h3>
+<h3>割り振り,職業ポイント関連</h3>
 
+割り振り初期値
 <label>
   <input type="radio" name="alloc-init" value="random" checked>
   ランダム（0〜10）
@@ -78,6 +82,13 @@
 <button type="button" onclick="confirmAllocationByChoice()">
   初期ポイント決定
 </button>
+<br>
+<br>
+各種ポイント補正値設定<br>
+割り振り<input type="number" id="alloc-correction" value="0">　職業<input type="number" id="skill-alloc-correction" value="0">
+<div class="note">
+  ※一部アビリティ等で職業ポイントの補正が入ったとき、役職変更の時等に活用してください。
+</div>
 
 
 <!-- 能力値欄（可変）-->
@@ -100,8 +111,8 @@
   <tr>
     <td>STR</td>
     <td><span id="str-race">0</span></td>
-    <td><input type="number" id="str-daice" value="0"></td>
-    <td><input type="number" id="str-quota" value="0"></td>
+    <td><input type="number" id="str-daice" value="0" min="0"></td>
+    <td><input type="number" id="str-quota" value="0" min="0"></td>
     <td><input type="number" id="str-correction" value="0"></td>
     <td><span id="str-true">0</span></td>
   </tr>
@@ -109,8 +120,8 @@
   <tr>
     <td>CON</td>
     <td><span id="con-race">0</span></td>
-    <td><input type="number" id="con-daice" value="0"></td>
-    <td><input type="number" id="con-quota" value="0"></td>
+    <td><input type="number" id="con-daice" value="0" min="0"></td>
+    <td><input type="number" id="con-quota" value="0" min="0"></td>
     <td><input type="number" id="con-correction" value="0"></td>
     <td><span id="con-true">0</span></td>
   </tr>
@@ -118,8 +129,8 @@
   <tr>
     <td>POW</td>
     <td><span id="pow-race">0</span></td>
-    <td><input type="number" id="pow-daice" value="0"></td>
-    <td><input type="number" id="pow-quota" value="0"></td>
+    <td><input type="number" id="pow-daice" value="0" min="0"></td>
+    <td><input type="number" id="pow-quota" value="0" min="0"></td>
     <td><input type="number" id="pow-correction" value="0"></td>
     <td><span id="pow-true">0</span></td>
   </tr>
@@ -127,8 +138,8 @@
   <tr>
     <td>AGI</td>
     <td><span id="agi-race">0</span></td>
-    <td><input type="number" id="agi-daice" value="0"></td>
-    <td><input type="number" id="agi-quota" value="0"></td>
+    <td><input type="number" id="agi-daice" value="0" min="0"></td>
+    <td><input type="number" id="agi-quota" value="0" min="0"></td>
     <td><input type="number" id="agi-correction" value="0"></td>
     <td><span id="agi-true">0</span></td>
   </tr>
@@ -136,8 +147,8 @@
   <tr>
     <td>DEX</td>
     <td><span id="dex-race">0</span></td>
-    <td><input type="number" id="dex-daice" value="0"></td>
-    <td><input type="number" id="dex-quota" value="0"></td>
+    <td><input type="number" id="dex-daice" value="0" min="0"></td>
+    <td><input type="number" id="dex-quota" value="0" min="0"></td>
     <td><input type="number" id="dex-correction" value="0"></td>
     <td><span id="dex-true">0</span></td>
   </tr>
@@ -145,8 +156,8 @@
   <tr>
     <td>IDA</td>
     <td><span id="int-race">0</span></td>
-    <td><input type="number" id="int-daice" value="0"></td>
-    <td><input type="number" id="int-quota" value="0"></td>
+    <td><input type="number" id="int-daice" value="0" min="0"></td>
+    <td><input type="number" id="int-quota" value="0" min="0"></td>
     <td><input type="number" id="int-correction" value="0"></td>
     <td><span id="int-true">0</span></td>
   </tr>
@@ -179,7 +190,7 @@
     <td>最大HP</td>
     <td><span id="hp-race">0</span></td>
     <td></td>
-    <td><input type="number" id="hp-quota" value="0"></td>
+    <td><input type="number" id="hp-quota" value="0" min="0"></td>
     <td><input type="number" id="hp-correction" value="0"></td>
     <td><span id="hp-true">0</span></td>
   </tr>
@@ -187,8 +198,8 @@
   <tr>
     <td>最大MP</td>
     <td><span id="mp-race">0</span></td>
-    <td><input type="number" id="mp-daice" value="0"></td>
-    <td><input type="number" id="mp-quota" value="0"></td>
+    <td><input type="number" id="mp-daice" value="0" min="0"></td>
+    <td><input type="number" id="mp-quota" value="0" min="0"></td>
     <td><input type="number" id="mp-correction" value="0"></td>
     <td><span id="mp-true">0</span></td>
   </tr>
@@ -196,8 +207,8 @@
   <tr>
     <td>スタミナ</td>
     <td><span id="sm-race">0</span></td>
-    <td><input type="number" id="sm-daice" value="0"></td>
-    <td><input type="number" id="sm-quota" value="0"></td>
+    <td><input type="number" id="sm-daice" value="0" min="0"></td>
+    <td><input type="number" id="sm-quota" value="0" min="0"></td>
     <td><input type="number" id="sm-correction" value="0"></td>
     <td><span id="sm-true">0</span></td>
   </tr>
@@ -205,8 +216,8 @@
   <tr> 
     <td>幸運</td>
     <td>0</td>
-    <td><input type="number" id="luck-daice" value="0"></td>
-    <td><input type="number" id="luck-quota" value="0"></td>
+    <td><input type="number" id="luck-daice" value="0" min="0"></td>
+    <td><input type="number" id="luck-quota" value="0" min="0"></td>
     <td><input type="number" id="luck-correction" value="0"></td>
     <td><span id="luck-true">0</span></td>
   </tr>
@@ -214,8 +225,8 @@
   <tr> 
     <td>記憶力</td>
     <td>2</td>
-    <td><input type="number" id="memory-daice" value="0"></td>
-    <td><input type="number" id="memory-quota" value="0"></td>
+    <td><input type="number" id="memory-daice" value="0" min="0"></td>
+    <td><input type="number" id="memory-quota" value="0" min="0"></td>
     <td><input type="number" id="memory-correction" value="0"></td>
     <td><span id="memory-true">0</span></td>
   </tr>

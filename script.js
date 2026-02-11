@@ -402,6 +402,8 @@ defineSkill(
 function updateStatus() {
 
   const level = Number(document.getElementById("level").value);
+  const meinjoblevel = Number(document.getElementById("mein-job-level").value);
+  const subjoblevel = Number(document.getElementById("sub-job-level").value);
 
   const str_daice = Number(document.getElementById("str-daice").value);
   const dex_daice = Number(document.getElementById("dex-daice").value);
@@ -532,7 +534,8 @@ let allocation = {
 };
 
 function getTotalPoints() {
-  return allocation.base + allocation.levelBonus;
+  const alloc_correction = Number(document.getElementById("alloc-correction").value);
+  return allocation.base + allocation.levelBonus + alloc_correction;
 }
 
 function getRemainingPoints() {
@@ -559,8 +562,9 @@ function updateAllocationBar() {
   const total = getTotalPoints();
 
   el.textContent =
-    `割り振り：${remaining} / ${total} `
-    + `(初期:${allocation.base} + Lv:${allocation.levelBonus} - 使用:${allocation.used})`;
+  `割り振り：${remaining} / ${total} `
+  + `(使用可能:${total} - 使用:${allocation.used})`;
+
 
   // 赤文字にする処理
   if (remaining < 0) {
@@ -614,7 +618,8 @@ let skillPoints = {
 };
 
 function getTotalSkillPoints() {
-  return skillPoints.base + skillPoints.levelBonus;
+  const skill_alloc_correction = Number(document.getElementById("skill-alloc-correction").value);
+  return skillPoints.base + skillPoints.levelBonus + skill_alloc_correction;
 }
 
 function getRemainingSkillPoints() {
@@ -622,8 +627,17 @@ function getRemainingSkillPoints() {
 }
 
 function recalcSkillPoints() {
+  const alloc_correction = Number(document.getElementById("alloc-correction").value);
+  const subjoblevel = Number(document.getElementById("sub-job-level").value);
+  const meinjoblevel = Number(document.getElementById("mein-job-level").value);
+  if(subjoblevel>0){
   skillPoints.levelBonus =
-    allocation.base + allocation.levelBonus - allocation.used;
+    allocation.base + allocation.levelBonus - allocation.used+subjoblevel+ meinjoblevel-2+alloc_correction;
+}
+else{
+  skillPoints.levelBonus =
+    allocation.base + allocation.levelBonus - allocation.used+ meinjoblevel-1+alloc_correction;
+}
 }
 
 function updateSkillPointBar() {
@@ -1504,6 +1518,9 @@ function saveCharacter() {
     id: characterId,
     name,
 
+    level: document.getElementById("level").value,
+    meinJobLevel: document.getElementById("mein-job-level").value,
+    subJobLevel: document.getElementById("sub-job-level").value,
     str_daice: document.getElementById("str-daice").value,
     dex_daice: document.getElementById("dex-daice").value,
     int_daice: document.getElementById("int-daice").value,
@@ -1579,6 +1596,9 @@ function loadCharacterById(id) {
 
   currentCharacterId = id;
 
+  document.getElementById("level").value = character.level;
+  document.getElementById("mein-job-level").value = character.meinJobLevel;
+  document.getElementById("sub-job-level").value = character.subJobLevel;
   document.getElementById("charName").value = character.name;
   document.getElementById("str-daice").value = character.str_daice;
   document.getElementById("dex-daice").value = character.dex_daice;
