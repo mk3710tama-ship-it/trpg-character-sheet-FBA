@@ -127,13 +127,141 @@ function getEffectText(skill, level) {
   return skill.effect[level] ?? "";
 }
 
+// タグのカテゴリ分け
+const tagCategoryMap = {
+  ヒューマン: "種族",
+  エルフ: "種族",
+  ホビット: "種族",
+  ドワーフ: "種族",
+  ワービースト: "種族",
+  リザードマン: "種族",
+  フィッシャー: "種族",
 
+  攻撃: "効果",
+  防御: "効果",
+  補助: "効果"
+};
+// スキル定義
+// 攻撃=>ダメージ,STR,命中率　防御=>回避,HP,回復 補助=>その他
 
 
 
 
 const skillMaster = [
-//ワービースト
+////ヒューマン
+//順応進化
+defineSkill(
+  // 名前・id
+  "順応進化",
+  // 検索タグ
+  ["ヒューマン", "補助"],
+  // レベル範囲 [min, max]
+  [1, 5],
+  // コスト [取得, レベル]
+  [10, 10],
+  // 効果（テンプレート式）
+  effectTemplate(
+    "役職レベルが{value}の倍数の時、スキルポイントを1獲得する(仮){suffix}",
+    level => {
+      const map = {
+      1: 10,
+      2: 8,
+      3: 7,
+      4: 6,
+      5: 5
+      };
+      return {
+      value: map[level],
+      suffix: level === 5 ? "(最大レベル)" : ""
+    }}
+  ),
+  //進化元(なくてもok)
+),
+//共生
+defineSkill(
+  // 名前・id
+  "共生",
+  // 検索タグ
+  ["ヒューマン", "補助"],
+  // レベル範囲 [min, max]
+  [1, 5],
+  // コスト [取得, レベル]
+  [2, 2],
+  // 効果（テンプレート式）
+  effectTemplate(
+    "同マスにいる味方の成功値 +{value}{suffix}",
+    level => {
+      const map = {
+      1: 3,
+      2: 5,
+      3: 8,
+      4: 10,
+      5: 12
+      };
+      return {
+      value: map[level],
+      suffix: level === 5 ? "(最大レベル)" : ""
+    }}
+  ),
+  //進化元(なくてもok)
+),
+//協調性
+defineSkill(
+  // 名前・id
+  "協調性",
+  // 検索タグ
+  ["ヒューマン", "補助"],
+  // レベル範囲 [min, max]
+  [1, 3],
+  // コスト [取得, レベル]
+  [16, 6],
+  // 効果（テンプレート式）
+  effectTemplate(
+    "同マス、または上下マスにいる味方の成功値 +{value}{suffix}",
+    level => {
+      const map = {
+      1: 12,
+      2: 13,
+      3: 15
+      };
+      return {
+      value: map[level],
+      suffix: level === 3 ? "(最大レベル)" : ""
+    }}
+  ),
+  //進化元(なくてもok)
+  "共生"
+),
+//経験則
+defineSkill(
+  // 名前・id
+  "経験則",
+  // 検索タグ
+  ["ヒューマン", "補助"],
+  // レベル範囲 [min, max]
+  [1, 5],
+  // コスト [取得, レベル]
+  [5, 5],
+  // 効果（テンプレート式）
+  effectTemplate(
+    "ほかのアビリティを最大レベルにしたとき、スキルポイントを{value}獲得する。{suffix}",
+    level => {
+      const map = {
+        1: 1,
+        2: 1,
+        3: 1,
+        4: 2,
+        5: 3
+      };
+      return {
+      value: map[level],
+      suffix: level === 5 ? "(最大レベル)" : ""
+    }}
+  ),
+  //進化元(なくてもok)
+),
+
+////ワービースト
 //捕食者の爪  
 defineSkill(
   // 名前・id
@@ -256,7 +384,7 @@ defineSkill(
   // 名前・id
   "獣圧",
   // 検索タグ
-  ["ワービースト", "デバフ"],
+  ["ワービースト", "補助"],
   // レベル範囲 [min, max]
   [1, 5],
   // コスト [取得, レベル]
@@ -280,12 +408,12 @@ defineSkill(
   )
   //進化元(なくてもok)
 ),
-//獣に睨まれた蛙
+//獣に睨まれた兎
 defineSkill(
   // 名前・id
-  "獣に睨まれた蛙",
+  "獣に睨まれた兎",
   // 検索タグ
-  ["ワービースト", "デバフ"],
+  ["ワービースト", "補助"],
   // レベル範囲 [min, max]
   [1, 4],
   // コスト [取得, レベル]
@@ -314,7 +442,7 @@ defineSkill(
   // 名前・id
   "獣牙の心傷",
   // 検索タグ
-  ["ワービースト", "デバフ"],
+  ["ワービースト", "補助"],
   // レベル範囲 [min, max]
   [1, 3],
   // コスト [取得, レベル]
@@ -339,7 +467,7 @@ defineSkill(
   "獣に睨まれた兎"
 ),
 
-//エルフ
+////エルフ
 //長寿の知恵
 defineSkill(
   // 名前・id
@@ -384,15 +512,529 @@ defineSkill(
       7:3,};
       return {
       value: map[level],
-      value2: Math.ceil(level/7),
+      value2: Math.ceil(level/6),
       suffix: level === 7 ? "(最大レベル)" : ""
     };
   }),
   //進化元(なくてもok)
 ),
-//ホビット
 
+////ホビット
 
+////ドワーフ
+//豪健
+defineSkill(
+  // 名前・id
+  "豪健",
+  // 検索タグ
+  ["ドワーフ", "防御"],
+  // レベル範囲 [min, max]
+  [1, 10],
+  // コスト [取得, レベル]
+  [1, 1],
+  // 効果（テンプレート式）
+  effectTemplate(
+    "体力最大値+{value}{suffix}",
+    level => ({
+      value: level,
+      suffix: level === 10 ? "(最大レベル)" : ""
+    })
+  ),
+  //進化元(なくてもok)
+),
+//豪健
+defineSkill(
+  // 名前・id
+  "豪力",
+  // 検索タグ
+  ["ドワーフ", "攻撃"],
+  // レベル範囲 [min, max]
+  [2, 5],
+  // コスト [取得, レベル]
+  [2, 2],
+  // 効果（テンプレート式）
+  effectTemplate(
+    "筋力値+{value}{suffix}",
+    level => ({
+      value: level,
+      suffix: level === 5 ? "(最大レベル)" : ""
+    })
+  ),
+  //進化元(なくてもok)
+),
+//豪快漢
+defineSkill(
+  // 名前・id
+  "豪快漢",
+  // 検索タグ
+  ["ドワーフ", "攻撃","防御"],
+  // レベル範囲 [min, max]
+  [1, 3],
+  // コスト [取得, レベル]
+  [30, 10],
+  // 効果（テンプレート式）
+  effectTemplate(
+    "体力最大値+{value},筋力値+{value2}{suffix}",
+    level => {
+      const map = {
+      1: 15,
+      2: 17,
+      3: 20
+      }
+      return {
+      value: map[level] ,
+      value2: level+5,
+      suffix: level === 3 ? "(最大レベル)" : ""
+    }
+  }),
+  //進化元(なくてもok)
+  "豪健 + 豪力"
+),
+//頑固おやじは背中で語る
+defineSkill(
+  // 名前・id
+  "頑固おやじは背中で語る",
+  // 検索タグ
+  ["ドワーフ", "攻撃","防御"],
+  // レベル範囲 [min, max]
+  [1, 1],
+  // コスト [取得, レベル]
+  [100, 1],
+  // 効果（テンプレート式）
+  effectTemplate(
+    "HP最大値+20,筋力値+8,その後HP最大値と筋力値を1.3倍(小数点切り捨て){suffix}",
+    level => ({
+      suffix: level === 1 ? "(最大レベル)" : ""
+    })
+  ),
+  //進化元(なくてもok)
+  "豪快漢"
+),
+//業物使い
+defineSkill(
+  // 名前・id
+  "業物使い",
+  // 検索タグ
+  ["ドワーフ", "攻撃"],
+  // レベル範囲 [min, max]
+  [1, 5],
+  // コスト [取得, レベル]
+  [4, 4],
+  // 効果（テンプレート式）
+  effectTemplate(
+    "武器の耐久値が半分以下の時、その武器によるダメージを+{value}する。{suffix}",
+    level => ({
+      value: level*3+(level===2),
+      suffix: level === 5 ? "(最大レベル)" : ""
+    })
+  ),
+  //進化元(なくてもok)
+),
+//武器愛
+defineSkill(
+  // 名前・id
+  "武器愛",
+  // 検索タグ
+  ["ドワーフ", "補助"],
+  // レベル範囲 [min, max]
+  [1, 5],
+  // コスト [取得, レベル]
+  [3, 3],
+  // 効果（テンプレート式）
+  effectTemplate(
+    "武器耐久値が減少するとき、{value}％で減少値を{value2}減少させる。{suffix}",
+    level => {
+      const map = {
+      1: 30,
+      2: 50,
+      3: 30,
+      4: 50,
+      5: 100
+      };
+      const map2 = {
+      1:1,
+      2:1,
+      3:2,
+      4:2,
+      5:1
+      };
+      return {
+      value: map[level],
+      value2: map2[level],
+      suffix: level === 5 ? "(最大レベル)" : ""
+    }}
+  ),
+  //進化元(なくてもok)
+),
+
+////リザードマン
+//硬鱗
+defineSkill(
+  // 名前・id
+  "硬鱗",
+  // 検索タグ
+  ["リザードマン", "防御"],
+  // レベル範囲 [min, max]
+  [1, 7],
+  // コスト [取得, レベル]
+  [2, 2],
+  // 効果（テンプレート式）
+  effectTemplate(
+    "装甲{value}を獲得する。回避成功値-20。攻撃、回避でのスタミナ消費+2{suffix}",
+    level => {
+      const map = {
+      1: 1,
+      2: 2,
+      3: 3,
+      4: 3,
+      5: 4,
+      6: 4,
+      7: 5
+      };
+      return {
+      value: map[level],
+      suffix: level === 7 ? "(最大レベル)" : ""
+    }}
+  ),
+  //進化元(なくてもok)
+),
+//薄鱗
+defineSkill(
+  // 名前・id
+  "薄鱗",
+  // 検索タグ
+  ["リザードマン", "防御"],
+  // レベル範囲 [min, max]
+  [1, 6],
+  // コスト [取得, レベル]
+  [17, 3],
+  // 効果（テンプレート式）
+  effectTemplate(
+    "装甲{value}を獲得する。回避成功値-10。{suffix}",
+    level => {
+      const map = {
+      1: 1,
+      2: 2,
+      3: 3,
+      4: 4,
+      5: 4,
+      6: 5
+      };
+      return {
+      value: map[level],
+      suffix: level === 6 ? "(最大レベル)" : ""
+    }}
+  ),
+  //進化元(なくてもok)
+  "硬鱗"
+),
+//重硬鱗
+defineSkill(
+  // 名前・id
+  "重硬鱗",
+  // 検索タグ
+  ["リザードマン", "防御"],
+  // レベル範囲 [min, max]
+  [1, 8],
+  // コスト [取得, レベル]
+  [17, 3],
+  // 効果（テンプレート式）
+  effectTemplate(
+    "装甲{value}を獲得する。回避成功値-30。攻撃、回避でのスタミナ消費+3{suffix}",
+    level => {
+      const map = {
+      1: 2,
+      2: 3,
+      3: 5,
+      4: 7,
+      5: 8,
+      6: 8,
+      7: 9,
+      8: 10
+      };
+      return {
+      value: map[level],
+      suffix: level === 8 ? "(最大レベル)" : ""
+    }}
+  ),
+  //進化元(なくてもok)
+  "硬鱗"
+),
+//竜鱗
+defineSkill(
+  // 名前・id
+  "竜鱗",
+  // 検索タグ
+  ["リザードマン", "防御"],
+  // レベル範囲 [min, max]
+  [1, 3],
+  // コスト [取得, レベル]
+  [110, 40],
+  // 効果（テンプレート式）
+  effectTemplate(
+    "CON÷2と同量の装甲を獲得する。デバフ抵抗ダイスに成功したとき装甲{value}を獲得する。{suffix}",
+    level => {
+      const map = {
+      1: 10,
+      2: 18,
+      3: 24
+      };
+      return {
+      value: map[level],
+      suffix: level === 3 ? "(最大レベル)" : ""
+    }}
+  ),
+  //進化元(なくてもok)
+  "重硬鱗+薄鱗"
+),
+//威圧
+defineSkill(
+  // 名前・id
+  "威圧",
+  // 検索タグ
+  ["リザードマン", "補助"],
+  // レベル範囲 [min, max]
+  [1, 8],
+  // コスト [取得, レベル]
+  [0, 10],
+  // 効果（テンプレート式）
+  effectTemplate(
+    "交渉/会話ダイスの成功値を{value}減少させる(竜人、魚人は除く)。強いモンスターと遭遇しやすくなる。自身を攻撃対象に含んだ攻撃が行われるとき、選ばれる確率を{value2}倍させる。{add}{suffix}",
+    level => {
+      const map = {
+      1: 50,
+      2: 45,
+      3: 40,
+      4: 30,
+      5: 20,
+      6: 15,
+      7: 10,
+      8: 10
+      };
+      const map2 = {
+      1: 4,
+      2: 3,
+      3: 3,
+      4: 2,
+      5: 2,
+      6: 2,
+      7: 1,
+      8: 1
+      };
+      return {
+      value: map[level],
+      value2: map2[level],
+      add: level === 8 ? "  このアビリティを外してもよい" : "",
+      suffix: level === 8 ? "(最大レベル)" : ""
+    }}
+  ),
+  //進化元(なくてもok)
+),
+//蛇に睨まれた蛙
+defineSkill(
+  // 名前・id
+  "蛇に睨まれた蛙",
+  // 検索タグ
+  ["リザードマン", "補助"],
+  // レベル範囲 [min, max]
+  [1, 5],
+  // コスト [取得, レベル]
+  [6, 6],
+  // 効果（テンプレート式）
+  effectTemplate(
+    "１つ前のターン中に自身が近接ダメージを与えた敵が、攻撃をするとき、その攻撃のファンブル値を与えたダメージ分だけ下げる。ただし低下する値は{value}以上にならない。{suffix}",
+    level => {
+    const map = {
+      1: 1,
+      2: 3,
+      3: 5,
+      4: 7,
+      5: 10
+    };
+    return {
+      value: map[level],
+      suffix: level === 5 ? "(最大レベル)" : ""
+    };
+  }
+  ),
+  //進化元(なくてもok)
+),
+
+////フィッシャー
+//湿り気肌
+defineSkill(
+  // 名前・id
+  "湿り気肌",
+  // 検索タグ
+  ["フィッシャー", "防御"],
+  // レベル範囲 [min, max]
+  [1, 8],
+  // コスト [取得, レベル]
+  [2, 2],
+  // 効果（テンプレート式）
+  effectTemplate(
+    " <小瓶>アイテムを使用したとき、HPを{value}回復する。{suffix}",
+    level => {
+      const map = {
+      1: 3,
+      2: 5,
+      3: 7,
+      4: 10,
+      5: 13,
+      6: 15,
+      7: 18,
+      8: 20
+      };
+      return {
+      value: map[level],
+      suffix: level === 8 ? "(最大レベル)" : ""
+    }}
+  ),
+  //進化元(なくてもok)
+),
+//魚眼
+defineSkill(
+  // 名前・id
+  "魚眼",
+  // 検索タグ
+  ["フィッシャー", "補助"],
+  // レベル範囲 [min, max]
+  [1, 5],
+  // コスト [取得, レベル]
+  [3, 3],
+  // 効果（テンプレート式）
+  effectTemplate(
+    " <水中>でも判定にデメリットが発生しない。自分以外の影響で成功値とファンブル値が減少するとき、その効果を{value}減少させる。{suffix}",
+    level => {
+      const map = {
+      1: 2,
+      2: 5,
+      3: 10,
+      4: 15,
+      5: 20
+      };
+      return {
+      value: map[level],
+      suffix: level === 5 ? "(最大レベル)" : ""
+    }}
+  ),
+  //進化元(なくてもok)
+),
+//水も滴るいい魚
+defineSkill(
+  // 名前・id
+  "水も滴るいい魚",
+  // 検索タグ
+  ["フィッシャー", "防御"],
+  // レベル範囲 [min, max]
+  [1, 5],
+  // コスト [取得, レベル]
+  [1, 1],
+  // 効果（テンプレート式）
+  effectTemplate(
+    " 炎魔法、炎症ダメージを{value}軽減する。{suffix}",
+    level => {
+      const map = {
+      1: 2,
+      2: 3,
+      3: 4,
+      4: 5,
+      5: 7,
+      };
+      return {
+      value: map[level],
+      suffix: level === 5 ? "(最大レベル)" : ""
+    }}
+  ),
+  //進化元(なくてもok)
+),
+//水を得た魚
+defineSkill(
+  // 名前・id
+  "水を得た魚",
+  // 検索タグ
+  ["フィッシャー", "防御"],
+  // レベル範囲 [min, max]
+  [1, 6],
+  // コスト [取得, レベル]
+  [7, 2],
+  // 効果（テンプレート式）
+  effectTemplate(
+    " 炎魔法、炎症、水魔法のダメージを{value}軽減する。水魔法によるダメージ以外の影響を無効化してもよい。{suffix}",
+    level => {
+      const map = {
+      1: 1,
+      2: 2,
+      3: 4,
+      4: 6,
+      5: 7,
+      6: 8
+      };
+      return {
+      value: map[level],
+      suffix: level === 8 ? "(最大レベル)" : ""
+    }}
+  ),
+  //進化元(なくてもok)
+  "水も滴るいい魚"
+),
+//滝を昇る
+defineSkill(
+  // 名前・id
+  "滝を昇る",
+  // 検索タグ
+  ["フィッシャー", "防御"],
+  // レベル範囲 [min, max]
+  [1, 5],
+  // コスト [取得, レベル]
+  [25, 8],
+  // 効果（テンプレート式）
+  effectTemplate(
+    " 魔法ダメージを{value}軽減する。<水辺>でのダイス失敗値は80以下に下がらない。{suffix}",
+    level => {
+      const map = {
+      1: 7,
+      2: 12,
+      3: 15,
+      4: 18,
+      5: 20
+      };
+      return {
+      value: map[level],
+      suffix: level === 5 ? "(最大レベル)" : ""
+    }}
+  ),
+  //進化元(なくてもok)
+  "水を得た魚"
+),
+//龍鱗
+defineSkill(
+  // 名前・id
+  "龍鱗",
+  // 検索タグ
+  ["フィッシャー", "防御"],
+  // レベル範囲 [min, max]
+  [1, 3],
+  // コスト [取得, レベル]
+  [87, 30],
+  // 効果（テンプレート式）
+  effectTemplate(
+    " 魔法ダメージを{value}軽減する。<水辺>でのダイス失敗値は80以下に下がらない。装甲を{value2}獲得する。{suffix}",
+    level => {
+      const map = {
+      1: 20,
+      2: 25,
+      3: 30
+      };
+      return {
+      value: map[level],
+      value2: level,
+      suffix: level === 3 ? "(最大レベル)" : ""
+    }}
+  ),
+  //進化元(なくてもok)
+  "滝を昇る"
+),
 ];
 
 
@@ -1023,17 +1665,38 @@ function addSkillFromSearch() {
 }
 
 function initTagOptions() {
-  const tags = new Set();
+  tagSelect.innerHTML = "";
+
+  const tagMap = {};
 
   skillMaster.forEach(skill => {
-    (skill.tags || []).forEach(tag => tags.add(tag));
+    (skill.tags || []).forEach(tag => {
+      const type = tagCategoryMap[tag] || "その他";
+
+      if (!tagMap[type]) {
+        tagMap[type] = new Set();
+      }
+
+      tagMap[type].add(tag);
+    });
   });
 
-  tags.forEach(tag => {
-    const option = document.createElement("option");
-    option.value = tag;
-    option.textContent = tag;
-    tagSelect.appendChild(option);
+  const categoryOrder = ["種族", "効果", "属性", "その他"];
+
+  categoryOrder.forEach(type => {
+    if (!tagMap[type]) return;
+
+    const group = document.createElement("optgroup");
+    group.label = `◆ ${type}`;
+
+    tagMap[type].forEach(tag => {
+      const option = document.createElement("option");
+      option.value = tag;
+      option.textContent = tag;
+      group.appendChild(option);
+    });
+
+    tagSelect.appendChild(group);
   });
 }
 
