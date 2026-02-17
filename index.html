@@ -302,7 +302,6 @@
 
 
 
-
 <h3>スキル一覧</h3>
 <ul id="skill-list" class="skill-list">
   <!-- JSで行を追加 -->
@@ -312,6 +311,48 @@
 取得でステータスに変化はありません、効果は自分で補正欄に書き込んでください
 </div>
 
+
+<!-- ===== アーツ ===== -->
+<h2>戦技</h2>
+
+<input
+  type="text"
+  id="art-name-input"
+  placeholder="戦技名で検索"
+  oninput="renderArtSearchList()"
+/>
+
+<div class="tag-search-area">
+  <select id="art-tag-select">
+    <option value="">タグを選択</option>
+  </select>
+  <button type="button" id="art-add-tag-btn">追加</button>
+  <div id="art-tag-note" class="note">
+タグ再タップで消去
+</div>
+</div>
+<div id="art-selected-tags"></div>
+
+<div class="tag-mode-area">
+  <label>
+    <input type="radio" name="art-tag-mode" value="and" checked>
+    AND
+  </label>
+  <label>
+    <input type="radio" name="art-tag-mode" value="or">
+    OR
+  </label>
+</div>
+
+
+<ul id="art-search-list" class="art-search-list"></ul>
+
+<button onclick="addSelectedArt()" class="art-acquire-btn">
+  選択戦技を取得
+</button>
+
+
+<ul id="art-list" class="art-list"></ul>
 
 
 

@@ -36,7 +36,7 @@ const subJobs ={
   none:{ str:0,con:0,pow:0,agi:0,dex:0,int:0,mp:0,hp:0,sm:0,mp:0 }
 };
 
-
+// =====================
 //以下スキル用の表示関数
 
 function effectTemplate(text, valueFunc) {
@@ -139,13 +139,15 @@ const tagCategoryMap = {
 
   攻撃: "効果",
   防御: "効果",
-  補助: "効果"
+  補助: "効果",
+
+  戦士: "職業",
+  魔法使い: "職業",
+  盗賊: "職業",
+  剣士: "職業",
 };
 // スキル定義
 // 攻撃=>ダメージ,STR,命中率　防御=>回避,HP,回復 補助=>その他
-
-
-
 
 const skillMaster = [
 ////ヒューマン
@@ -1039,6 +1041,27 @@ defineSkill(
 
 
 // =====================
+// Artsの定義
+
+const artsMaster = [
+  {
+    id: "全身全霊",
+    name: "全身全霊",
+    tags: ["攻撃","戦士","剣士"],
+    effect: "このアクションでの自分が与えるダメージを3増加させる",
+    cost: 2
+  },
+  {
+    id: "戦術移動",
+    name: "戦術移動",
+    tags: ["防御","戦士","盗賊"],
+    effect: "移動1",
+    cost: 5
+  }
+];
+
+
+// =====================
 // ステータス計算
 // =====================
 function updateStatus() {
@@ -1300,6 +1323,30 @@ function updateSkillPointBar() {
   }
 }
 
+function recalcSkillPointUsed() {
+
+  // ① スキル分を計算
+  const skillUsed = characterSkills.reduce((sum, skill) => {
+    const master = skillMaster.find(s => s.id === skill.id);
+    if (!master) return sum;
+
+    return sum + calcSkillCost(skill, master);
+  }, 0);
+
+  // ② Arts分を計算
+  const artsUsed = characterArts.reduce((sum, art) => {
+    const master = artsMaster.find(a => a.id === art.id);
+    if (!master) return sum;
+
+    return sum + (master.cost || 0);
+  }, 0);
+
+  // ③ 合算
+  skillPoints.used = skillUsed + artsUsed;
+
+  updateSkillPointBar();
+}
+
 
 // =====================
 // ダイスロール
@@ -1452,34 +1499,7 @@ document.getElementById("add-tag-btn")
     radio.addEventListener("change", renderSkillSearchList);
   });
 
-
-function renderSkillSelect() {
-  const select = document.getElementById("skill-select");
-  if (!select) return; // ← これ重要
-  select.innerHTML = '<option value="">スキルを選択</option>';
-
-  skillMaster.forEach(skill => {
-    const opt = document.createElement("option");
-    opt.value = skill.id;
-    opt.textContent = skill.name;
-    select.appendChild(opt);
-  });
-}
-
-function addSkill() {
-  const id = document.getElementById("skill-select").value;
-  if (!id) return;
-
-  if (characterSkills.some(s => s.id === id)) {
-    alert("すでに取得しています");
-    return;
-  }
-
-  characterSkills.push({ id, level: 1 });
-  recalcSkillPointUsed();
-  renderSkillList();
-}
-
+//取得したスキル表示
 function renderSkillList() {
   const ul = document.getElementById("skill-list");
   ul.innerHTML = "";
@@ -1538,7 +1558,7 @@ effect.appendChild(
     ul.appendChild(li);
   });
 }
-
+//スキルレベル変更
 function changeSkillLevel(skillId, diff) {
   const skill = characterSkills.find(s => s.id === skillId);
   const master = skillMaster.find(s => s.id === skillId);
@@ -1551,7 +1571,7 @@ function changeSkillLevel(skillId, diff) {
   recalcSkillPointUsed();
   renderSkillList();
 }
-
+//スキルポイント計算
 function calcSkillCost(skillData, master) {
   if (!master.cost) return 0;
 
@@ -1562,18 +1582,7 @@ function calcSkillCost(skillData, master) {
     (skillData.level - 1) * master.cost.perLevel
   );
 }
-
-function recalcSkillPointUsed() {
-  skillPoints.used = characterSkills.reduce((sum, skill) => {
-    const master = skillMaster.find(s => s.id === skill.id);
-    if (!master) return sum;
-
-    return sum + calcSkillCost(skill, master);
-  }, 0);
-
-  updateSkillPointBar();
-}
-
+//スキル削除
 function removeSkill(skillId) {
   const skill = characterSkills.find(s => s.id === skillId);
   const master = skillMaster.find(s => s.id === skillId);
@@ -1588,11 +1597,11 @@ function removeSkill(skillId) {
   recalcSkillPointUsed();
   renderSkillList();
 }
-
+//スキル効果テキスト取得
 function getSkillEffectText(skillData, master) {
   return getEffectText(master, skillData.level);
 }
-
+//スキル検索
 function renderSkillSearchList() {
   searchList.innerHTML = "";
   selectedSkillId = null;
@@ -1642,7 +1651,7 @@ if (nameKeyword) {
     })
     .forEach(renderSkillRow);
 }
-
+//スキル追加
 function addSkillFromSearch() {
   if (!selectedSkillId) {
     alert("スキルを選択してください");
@@ -1662,8 +1671,11 @@ function addSkillFromSearch() {
   searchInput.value = "";
   searchList.innerHTML = "";
   selectedSkillId = null;
-}
 
+  renderSkillSearchList();
+
+}
+//タグのオプションを初期化、カテゴリの分類
 function initTagOptions() {
   tagSelect.innerHTML = "";
 
@@ -1681,7 +1693,7 @@ function initTagOptions() {
     });
   });
 
-  const categoryOrder = ["種族", "効果", "属性", "その他"];
+  const categoryOrder = ["種族","職業", "効果", "属性", "その他"];
 
   categoryOrder.forEach(type => {
     if (!tagMap[type]) return;
@@ -1699,7 +1711,7 @@ function initTagOptions() {
     tagSelect.appendChild(group);
   });
 }
-
+//選択したタグを表示する関数
 function renderSelectedTags() {
   const area = document.getElementById("selected-tags");
   area.innerHTML = "";
@@ -1718,13 +1730,13 @@ function renderSelectedTags() {
     area.appendChild(span);
   });
 }
-
+//たぐしゅとく
 function getTagMode() {
   return document.querySelector(
     'input[name="tag-mode"]:checked'
   ).value;
 }
-
+//スキル検索結果の表示
 function renderSkillRow(skill) {
   const li = document.createElement("li");
   li.className = "skill-search-row";
@@ -1750,13 +1762,318 @@ function renderSkillRow(skill) {
   searchList.appendChild(li);
 }
 
+//=====================
+//アーツ管理
+//=====================
+
+let characterArts = [];
+let selectedArtId = null;
+let selectedArtTags = [];
+let artTagMode = "and"; // or
+document
+  .getElementById("art-add-tag-btn")
+  .addEventListener("click", () => {
+
+    const select = document.getElementById("art-tag-select");
+    const tag = select.value;
+
+    if (!tag) return;
+
+    if (!selectedArtTags.includes(tag)) {
+      selectedArtTags.push(tag);
+    }
+
+    renderSelectedArtTags();
+    renderArtSearchList();
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  initArtTagSelect();
+});
+document.addEventListener("DOMContentLoaded", () => {
+  initArtTagOptions();
+});
+document
+  .querySelectorAll('input[name="art-tag-mode"]')
+  .forEach(radio => {
+    radio.addEventListener("change", renderArtSearchList);
+  });
+
+
+
+//本チャンの追加関数
+function addArtById(id) {
+
+  if (!id) return;
+
+  if (characterArts.some(a => a.id === id)) {
+    alert("すでに取得しています");
+    return;
+  }
+
+  const master = artsMaster.find(a => a.id === id);
+  if (!master) return;
+
+  characterArts.push({ id });
+
+  renderArtList();
+
+  // 🔽 ここに入れる
+  document
+    .querySelectorAll("#art-search-list li")
+    .forEach(el => el.classList.remove("selected"));
+
+  selectedArtId = null;
+  
+  const input = document.getElementById("art-name-search");
+if (input) input.value = "";
+
+const list = document.getElementById("art-search-list");
+if (list) list.innerHTML = "";
+}
+//戦技リストを描画する関数
+function renderArtList() {
+  const ul = document.getElementById("art-list");
+  ul.innerHTML = "";
+
+  characterArts.forEach(artData => {
+    const master = artsMaster.find(a => a.id === artData.id);
+    if (!master) return;
+
+    const li = document.createElement("li");
+    li.className = "art-table";
+
+    const header = document.createElement("div");
+    header.className = "art-header";
+    header.textContent = master.id;
+
+    const footer = document.createElement("div");
+    footer.className = "art-footer";
+
+    const effect = document.createElement("div");
+    effect.className = "art-effect";
+    effect.textContent = master.effect;
+
+    const del = document.createElement("button");
+    del.textContent = "削除";
+    del.className = "art-delete-btn";
+    del.onclick = () => removeArt(master.id);
+
+    footer.append(effect, del);
+    li.append(header, footer);
+    ul.appendChild(li);
+  });
+}
+//戦技の削除関数
+function removeArt(id) {
+
+  const master = artsMaster.find(a => a.id === id);
+
+  characterArts = characterArts.filter(a => a.id !== id);
+
+  recalcSkillPointUsed(); // コスト再計算 
+
+  renderArtList();
+}
+//戦技検索欄のフィルタリング
+function renderArtSearchList() {
+  const list = document.getElementById("art-search-list");
+  list.innerHTML = "";
+
+  const keyword = document
+    .getElementById("art-name-input")
+    .value
+    .trim()
+    .toLowerCase();
+
+  const mode = getArtTagMode();
+
+  artsMaster
+    .filter(art => {
+
+      // 🔹 名前検索
+      if (keyword) {
+        if (!art.name.toLowerCase().includes(keyword)) {
+          return false;
+        }
+      }
+
+      // 🔹 タグ検索
+      if (selectedArtTags.length > 0) {
+        if (!art.tags) return false;
+
+        if (mode === "and") {
+          return selectedArtTags.every(tag =>
+            art.tags.includes(tag)
+          );
+        } else {
+          return selectedArtTags.some(tag =>
+            art.tags.includes(tag)
+          );
+        }
+      }
+
+      return true;
+    })
+    .forEach(renderArtRow);
+}
+//戦技検索結果の行を作る関数
+function renderArtRow(art) {
+  const list = document.getElementById("art-search-list");
+
+  const li = document.createElement("li");
+  li.className = "art-search-row";
+
+  // タグ表示用テキスト
+  const tagText = art.tags?.join(" / ") || "";
+
+  // 名前 + タグ表示
+  li.textContent = tagText
+    ? `${art.name}（${tagText}）`
+    : art.name;
+
+  // クリック時の選択処理
+  li.onclick = () => {
+    document
+      .querySelectorAll(".art-search-row")
+      .forEach(el => el.classList.remove("selected"));
+
+    li.classList.add("selected");
+    selectedArtId = art.id;
+  };
+
+  list.appendChild(li);
+}
+//ボタンから起動される追加関数
+function addSelectedArt() {
+  if (!selectedArtId) {
+    alert("戦技を選択してください");
+    return;}
+
+
+  addArtById(selectedArtId);
+  renderArtList();
+
+  // 検索リセット
+  document.getElementById("art-name-input").value = "";
+  renderArtSearchList();
+}
+//タグ追加関数
+function addArtTag() {
+  const select = document.getElementById("art-tag-select");
+  const tag = select.value;
+  if (!tag) return;
+
+  if (!selectedArtTags.includes(tag)) {
+    selectedArtTags.push(tag);
+  }
+
+  renderSelectedArtTags();
+  renderArtSearchList();
+}
+//戦技のタグオプションを初期化する関数、タグのカテゴリ分類
+function initArtTagOptions() {
+  const tagSelect = document.getElementById("art-tag-select");
+  tagSelect.innerHTML = "";
+
+  const tagMap = {};
+
+  artsMaster.forEach(art => {
+    (art.tags || []).forEach(tag => {
+      const type = tagCategoryMap[tag] || "その他";
+
+      if (!tagMap[type]) {
+        tagMap[type] = new Set();
+      }
+
+      tagMap[type].add(tag);
+    });
+  });
+
+  const categoryOrder = ["種族","職業", "効果", "属性", "その他"];
+
+  categoryOrder.forEach(type => {
+    if (!tagMap[type]) return;
+
+    const group = document.createElement("optgroup");
+    group.label = `◆ ${type}`;
+
+    tagMap[type].forEach(tag => {
+      const option = document.createElement("option");
+      option.value = tag;
+      option.textContent = tag;
+      group.appendChild(option);
+    });
+
+    tagSelect.appendChild(group);
+  });
+}
+//選択したタグを青く表示する関数
+function renderSelectedArtTags() {
+  const area = document.getElementById("art-selected-tags");
+  area.innerHTML = "";
+
+  selectedArtTags.forEach(tag => {
+    const span = document.createElement("span");
+    span.textContent = tag;
+    span.className = "art-selected-tag";
+
+    span.onclick = () => {
+      selectedArtTags =
+        selectedArtTags.filter(t => t !== tag);
+      renderSelectedArtTags();
+      renderArtSearchList();
+    };
+
+    area.appendChild(span);
+  });
+}
+//戦技のタグセレクトを初期化する関数、artMasterからタグを収集して重複なしでセレクトに追加
+function initArtTagSelect() {
+  const select = document.getElementById("art-tag-select");
+  if (!select) return;
+
+  // 既存optionを消す（初期以外）
+  select.innerHTML = '<option value="">タグを選択</option>';
+
+  // artMaster からタグを収集
+  const tagSet = new Set();
+
+  artsMaster.forEach(art => {
+    if (art.tags) {
+      art.tags.forEach(tag => tagSet.add(tag));
+    }
+  });
+
+  // 重複なしで追加
+  tagSet.forEach(tag => {
+    const option = document.createElement("option");
+    option.value = tag;
+    option.textContent = tag;
+    select.appendChild(option);
+  });
+}
+//タグの削除関数
+function removeArtTag(tag) {
+  selectedArtTags =
+    selectedArtTags.filter(t => t !== tag);
+
+  renderSelectedArtTags();
+  renderArtSearchList(); // ← 🔥ここ重要
+}
+//タグのAND/ORモードを取得する関数
+function getArtTagMode() {
+  const checked = document.querySelector(
+    'input[name="art-tag-mode"]:checked'
+  );
+  return checked ? checked.value : "and";
+}
 
 
 // =====================
 // アイテム管理
 // =====================
 let currentItems = [];
-
 
 function renderItemList() {
   const container = document.getElementById("item-list");
@@ -1813,7 +2130,6 @@ card.append(header, footer);
   });
 }
 
-
 function changeItemQuantity(index, delta) {
   const item = currentItems[index];
   item.quantity += delta;
@@ -1833,8 +2149,6 @@ function removeItem(index) {
   currentItems.splice(index, 1);
   renderItemList();
 }
-
-
 
 document.getElementById("add-item").addEventListener("click", () => {
   const nameEl = document.getElementById("item-name");
@@ -2226,6 +2540,7 @@ function saveCharacter() {
     allocation: allocation,
     skillPoints: skillPoints,
     skills: characterSkills,
+    Arts: characterArts,
     weapons: currentWeapons.map(weapon =>({...weapon}))
 
   };
@@ -2320,6 +2635,9 @@ skillPoints = character.skillPoints || {
 characterSkills = character.skills || [];
 recalcSkillPointUsed();
 renderSkillList();
+
+characterArts = character.Arts || [];
+renderArtList();
 
   updateStatus();
   updateView();
@@ -2544,6 +2862,7 @@ updateView();
 renderCharacterList();
 updateAllocationBar();
 updateSkillPointBar();
-renderSkillSelect();
 renderSkillList();
 renderSkillSearchList();
+renderArtList();
+renderArtSearchList();
