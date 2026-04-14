@@ -1047,6 +1047,8 @@ const artsMaster = [
   {
     id: "全身全霊",
     name: "全身全霊",
+    usedcost: "HP:3",
+    timing: "ダメージ",
     tags: ["攻撃","戦士","剣士"],
     effect: "このアクションでの自分が与えるダメージを3増加させる",
     cost: 2
@@ -1054,10 +1056,21 @@ const artsMaster = [
   {
     id: "戦術移動",
     name: "戦術移動",
+    usedcost: "SM:1,HP:1",
+    timing: "メジャー",
     tags: ["防御","戦士","盗賊"],
     effect: "移動1",
     cost: 5
-  }
+  },
+  {
+    id: "パリィ",
+    name: "パリィ",
+    usedcost: "なし",
+    timing: "ダメージ",
+    tags: ["防御","剣士"],
+    effect: "このアクション中での",
+    cost: 10
+  },
 ];
 
 
@@ -1568,7 +1581,7 @@ function changeSkillLevel(skillId, diff) {
   if (next < master.minLevel || next > master.maxLevel) return;
 
   skill.level = next;
-  recalcSkillPointUsed();
+  sed();
   renderSkillList();
 }
 //スキルポイント計算
@@ -1830,6 +1843,7 @@ if (input) input.value = "";
 
 const list = document.getElementById("art-search-list");
 if (list) list.innerHTML = "";
+recalcSkillPointUsed(); // コスト再計算
 }
 //戦技リストを描画する関数
 function renderArtList() {
@@ -1843,10 +1857,23 @@ function renderArtList() {
     const li = document.createElement("li");
     li.className = "art-table";
 
+    // ===== 上段 =====
     const header = document.createElement("div");
-    header.className = "art-header";
-    header.textContent = master.id;
+    header.className = "art-header art-row";
 
+    // 左：名前
+    const name = document.createElement("div");
+    name.className = "art-name";
+    name.textContent = master.name;
+
+    // 右：コスト＋全角スペース＋タイミング
+    const meta = document.createElement("div");
+    meta.className = "art-meta";
+    meta.textContent = `使用コスト:${master.usedcost}　　タイミング:${master.timing}`;
+
+    header.append(name, meta);
+
+    // ===== 下段 =====
     const footer = document.createElement("div");
     footer.className = "art-footer";
 
@@ -1860,6 +1887,7 @@ function renderArtList() {
     del.onclick = () => removeArt(master.id);
 
     footer.append(effect, del);
+
     li.append(header, footer);
     ul.appendChild(li);
   });

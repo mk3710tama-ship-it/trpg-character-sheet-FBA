@@ -412,6 +412,29 @@ h1 {
   border-radius: 4px;
 }
 
+
+/* 上段を横並びにする */
+.art-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* 名前は太字・左 */
+.art-name {
+  font-weight: bold;
+}
+
+/* 右側情報 */
+
+.art-meta {
+  font-size: 0.9em;
+
+  /* ↓ ここを調整 */
+  color: #333;        /* ← effect(#555)より濃い */
+  font-weight: 500;   /* ← 太字より軽い中間 */
+}
+
 .art-selected-tag {
   display: inline-block;
   padding: 4px 8px;
