@@ -1581,7 +1581,7 @@ function changeSkillLevel(skillId, diff) {
   if (next < master.minLevel || next > master.maxLevel) return;
 
   skill.level = next;
-  sed();
+  recalcSkillPointUsed();
   renderSkillList();
 }
 //スキルポイント計算
