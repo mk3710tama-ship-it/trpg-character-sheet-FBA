@@ -675,6 +675,17 @@ h1 {
   color: #c00;
 }
 
+.create-btn {
+  margin-bottom: 10px;
+  padding: 6px 12px;
+  border: 1px solid #666;
+  background: #fff;
+  cursor: pointer;
+}
+
+.create-btn:hover {
+  background: #f5f5f5;
+}
 
 
 /*===================*/

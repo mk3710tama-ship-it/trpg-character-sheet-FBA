@@ -1221,7 +1221,7 @@ function getRemainingPoints() {
 }
 
 function setLevelBonus(level) {
-  allocation.levelBonus = Math.floor(level/10); // 仮ルール
+  allocation.levelBonus = Math.floor(level/10); 
   updateAllocationBar();
 }
 
@@ -1295,15 +1295,16 @@ let skillPoints = {
   used: 0         // 使用済み
 };
 
+//AP総量を計算、戻り値が数字
 function getTotalSkillPoints() {
   const skill_alloc_correction = Number(document.getElementById("skill-alloc-correction").value);
   return skillPoints.base + skillPoints.levelBonus + skill_alloc_correction;
 }
-
+//使用可能APを計算、戻り値が数字
 function getRemainingSkillPoints() {
   return getTotalSkillPoints() - skillPoints.used;
 }
-
+//APの追加分を計算してlevelBonusにセットする,めんどくさいからレベル以外の要素(補正値、割り振り側で消費した分)も計算
 function recalcSkillPoints() {
   const alloc_correction = Number(document.getElementById("alloc-correction").value);
   const subjoblevel = Number(document.getElementById("sub-job-level").value);
@@ -1317,7 +1318,7 @@ else{
     allocation.base + allocation.levelBonus - allocation.used+ meinjoblevel-1+alloc_correction;
 }
 }
-
+//下の表示の更新
 function updateSkillPointBar() {
   const el = document.getElementById("skill-point-summary");
   if (!el) return;
@@ -1335,7 +1336,7 @@ function updateSkillPointBar() {
     el.classList.remove("negative");
   }
 }
-
+//ポイントの使用値を計算
 function recalcSkillPointUsed() {
 
   // ① スキル分を計算
@@ -1364,10 +1365,12 @@ function recalcSkillPointUsed() {
 // =====================
 // ダイスロール
 // =====================
+
+//1dを振れる
 function rollDice(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-
+//使うやつを定義
 const diceRules = {
   "1d3": () => rollDice(1, 3),
   "1d4": () => rollDice(1, 4),
@@ -1381,7 +1384,7 @@ const diceRules = {
   "1d3-1": () => rollDice(1,3)-1,
   "0":()=>0
 };
-
+//種族ごとのMP,luckのダイスルール
 const raceDiceMap = {
   human: {
     luck: "1d11-1",
@@ -1413,7 +1416,7 @@ const raceDiceMap = {
   }
 
 };
-
+//ステータスロールの共通処理
 function rollStat(inputId, rollFunc) {
   const input = document.getElementById(inputId);
   if (!input) return;
@@ -1421,7 +1424,7 @@ function rollStat(inputId, rollFunc) {
   input.value = rollFunc();
   updateStatus();
 }
- 
+//MPとLuckは種族ごとのルールがあるので専用の関数で処理
 function roll_MP_Luck(statKey) {
   const race = document.getElementById("specie").value;
   const raceRule = raceDiceMap[race];
@@ -1436,7 +1439,7 @@ function roll_MP_Luck(statKey) {
 
   updateStatus();
 }
-
+//すべてのステータスを一括でロールする前の確認,実施
 function confirmRollAllStats(type) {
   const message =
     "すべてのステータスを一括でロールします。\n"
@@ -1450,8 +1453,7 @@ function confirmRollAllStats(type) {
     add_rollAllStats();
   }
 }
-
-
+//すべての基礎ステータスを一括でロールする処理
 function basic_rollAllStats() {
   rollStat("str-daice", diceRules["1d6"]);
   rollStat("dex-daice", diceRules["1d6-1"]);
@@ -1460,7 +1462,7 @@ function basic_rollAllStats() {
   rollStat("pow-daice", diceRules["1d6"]);
   rollStat("agi-daice", diceRules["1d6"]);
 }
-
+//すべての追加ステータスを一括でロールする処理,MPとLuckは種族ごとにルールが違うので専用の関数を呼ぶ
 function add_rollAllStats() {
   rollStat("sm-daice", diceRules["3d8"]);
   rollStat("memory-daice", diceRules["1d4"]);
@@ -2087,7 +2089,7 @@ function removeArtTag(tag) {
     selectedArtTags.filter(t => t !== tag);
 
   renderSelectedArtTags();
-  renderArtSearchList(); // ← 🔥ここ重要
+  renderArtSearchList(); // ← ここ重要
 }
 //タグのAND/ORモードを取得する関数
 function getArtTagMode() {
@@ -2103,6 +2105,7 @@ function getArtTagMode() {
 // =====================
 let currentItems = [];
 
+//アイテムリストを描画する関数
 function renderItemList() {
   const container = document.getElementById("item-list");
   container.innerHTML = "";
@@ -2157,7 +2160,7 @@ card.append(header, footer);
     container.appendChild(card);
   });
 }
-
+//数量変更
 function changeItemQuantity(index, delta) {
   const item = currentItems[index];
   item.quantity += delta;
@@ -2168,7 +2171,7 @@ function changeItemQuantity(index, delta) {
 
   renderItemList();
 }
-
+//アイテム削除
 function removeItem(index) {
   if (!confirm("このアイテムを削除しますか？")) {
     return;
@@ -2279,14 +2282,51 @@ function renderWeaponList() {
   });
 }
 
-
 function removeWeapon(index) {
   if (!confirm("この武器を削除しますか？")) return;
   currentWeapons.splice(index, 1);
   renderWeaponList();
 }
 
+// =====================
+// キャラ出力(クリップボードコピー用のテキスト生成)
+// =====================
+function generateCharacterOutput() {
 
+  let text = "";
+
+  /* ===== ステータス ===== */
+  text += "【ステータス】\n";
+  text += `メインLv:${document.getElementById("mein-job-level").value}\n`;
+  text += `サブLv:${document.getElementById("sub-job-level").value}\n`;
+
+  text += "\n";
+
+  /* ===== スキル ===== */
+  text += "【スキル】\n";
+
+  characterSkills.forEach(skill => {
+    const master = skillMaster.find(s => s.id === skill.id);
+    if (!master) return;
+
+    text += `${master.name} Lv.${skill.level}\n`;
+  });
+
+  text += "\n";
+
+  /* ===== アーツ ===== */
+  text += "【アーツ】\n";
+
+  characterArts.forEach(art => {
+    const master = artsMaster.find(a => a.id === art.id);
+    if (!master) return;
+
+    text += `${master.name}（C:${master.usedcost} T:${master.timing}）効果:${master.effect}\n`;
+  });
+
+  /* ===== 出力 ===== */
+  document.getElementById("output-area").value = text;
+}
 
 
 
@@ -2332,7 +2372,6 @@ document.getElementById("btn-view").addEventListener("click", () => {
 document.getElementById("btn-list").addEventListener("click", () => {
   showScreen("list");
 });
-
 
 // =====================
 // 閲覧エリア更新
@@ -2488,6 +2527,37 @@ function renderViewWeaponList() {
     card.append(name, statsRow, note);
     container.appendChild(card);
   });
+}
+
+//====================
+//新規キャラ作成
+//====================
+function goToCreate() {
+ showScreen("edit");
+currentCharacterId = null;
+document.getElementById("charName").value = "";
+
+  // 🔥 新規作成なので初期化
+  updateStatus();
+updateView();
+renderCharacterList();
+updateAllocationBar();
+updateSkillPointBar();
+renderSkillList();
+renderSkillSearchList();
+renderArtList();
+renderArtSearchList();
+
+}
+
+function resetCharacterData() {
+  characterSkills = [];
+  characterArts = [];
+
+  skillPoints.used = 0;
+
+  renderSkillList();
+  renderArtList();
 }
 
 

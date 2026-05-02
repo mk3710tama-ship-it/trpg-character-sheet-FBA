@@ -455,10 +455,18 @@
 </table>
 
 
+<textarea id="output-area" rows="10" style="width:100%;"></textarea>
+<button onclick="generateCharacterOutput()">出力</button>
+
+
   </div>
 
 <div id="list-area" style="display:none;">
   <h2>保存キャラクター一覧</h2>
+<button onclick="goToCreate()" class="create-btn">
+    新規キャラクター作成
+</button>
+
   <div class="character-table">
   <div class="character-row header">
     <div>キャラクター名</div>
